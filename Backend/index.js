@@ -22,50 +22,110 @@ app.get('/', function(req, res){
     });
 });
 
+app.get('/users', async (req, res) => {
+    try {
+        // Ejecutamos la consulta para traer todos los usuarios
+        const [users] = await realizarQuery('SELECT * FROM Users');
+
+        // Retornamos la lista con un estatus 200 (OK)
+        return res.status(200).json({
+            success: true,
+            data: users
+        });
+
+    } catch (error) {
+        console.error('Error en GET /users:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor al obtener los usuarios.',
+        });
+    }
+});
+
 /**
  * req = request. en este objeto voy a tener todo lo que reciba del cliente
  * res = response. Voy a responderle al cliente
  */
 app.post('/register', async (req, res) => {
-    const { dni, fullName, nickName, password } = req.body;
-    //validamos datos
-    if (!dni || !fullName || !nickName || !password) {
+    const { fullName, nickName, password } = req.body;
+ 
+    // Validación de campos obligatorios
+    if (!fullName || !nickName || !password) {
         return res.status(400).json({
             success: false,
             message: 'Todos los campos son obligatorios.',
         });
     }
-
+ 
     try {
-        //verificacion dedni y nickname 
-        const [exDni] = await realizarQuery(
-            'SELECT id_user FROM Users WHERE dni = ?',
-            [dni]
-        );
-        if (exDni.length > 0) {
-            return res.status(409)
+        // Verificar que el nickName no exista
+        const vfNick = await realizarQuery('SELECT id_user FROM Users WHERE nickName = ?',
+            [nickName]);
+        if (vfNick.length > 0) {
+            return res.status(409).json({
+                success: false,
+                message: 'El nombre de usuario ya está en uso.',
+            });
         }
-        const [exNick] = await realizarQuery(
-            'SELECT id_user FROM Users WHERE nickName = ?',
-            [nickName]
-        );
-        if (exNick.length > 0) {
-            return res.status(409)
-        }
-        //ejec
-        const [result] = await realizarQuery(
-            'INSERT INTO Users (dni, fullName, nickName, password, is_ad) VALUES (?, ?, ?, ?, FALSE)',
-            [dni, fullName, nickName, password]
-        );
 
+
+        // Insertar usuario
+        const result = await realizarQuery('INSERT INTO Users (fullName, nickName, password, is_ad) VALUES (?, ?, ?, FALSE)', [fullName, nickName, password]);
+        return res.status(201).json({ userId: result.insertId });
+ 
         return res.status(201).json({
             success: true,
             message: '¡Usuario registrado con éxito!',
             userId: result.insertId,
         });
-
+ 
     } catch (error) {
         console.error('Error en /register:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor.',
+        });
+    }
+});
+
+app.post('/login', async (req, res) => {
+    const { nickName, password } = req.body;
+
+    if (!nickName || !password) {
+        return res.status(400).json({
+            success: false,
+            message: 'Usuario y contraseña son obligatorios.',
+        });
+    }
+
+    try {
+        const userFound = await realizarQuery(
+            'SELECT id_user, fullName, nickName, password, is_ad FROM Users WHERE nickName = ? AND password = ?',
+            [nickName, password]
+        );
+
+        if (userFound.length === 0) {
+            return res.status(401).json({
+                success: false,
+                message: 'Los datos ingresados son incorrectos.',
+            });
+        }
+
+        const user = userFound[0];
+
+        return res.status(200).json({
+            success: true,
+            message: `¡Bienvenido, ${user.fullName}!`,
+            user: {
+                id:       user.id_user,
+                fullName: user.fullName,
+                nickName: user.nickName,
+                is_ad:    user.is_ad,
+            },
+        });
+
+    } catch (error) {
+        console.error('Error en /login:', error);
         return res.status(500).json({
             success: false,
             message: 'Error interno del servidor.',
