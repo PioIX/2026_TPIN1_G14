@@ -42,10 +42,7 @@ app.get('/users', async (req, res) => {
     }
 });
 
-/**
- * req = request. en este objeto voy a tener todo lo que reciba del cliente
- * res = response. Voy a responderle al cliente
- */
+
 app.post('/register', async (req, res) => {
     const { fullName, nickName, password } = req.body;
  
@@ -75,7 +72,7 @@ app.post('/register', async (req, res) => {
  
         return res.status(201).json({
             success: true,
-            message: '¡Usuario registrado con éxito!',
+            message: 'Todo ok!',
             userId: result.insertId,
         });
  
@@ -115,7 +112,7 @@ app.post('/login', async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            message: `¡Bienvenido, ${user.fullName}!`,
+            message: `Bienvenido, ${user.fullName}!`,
             user: {
                 id:       user.id_user,
                 fullName: user.fullName,

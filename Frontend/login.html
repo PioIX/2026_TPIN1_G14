@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dino Game</title>
+    <link rel="stylesheet" href="styles/login.css" />
+</head>
+<body>
+
+    <div id="app">
+        
+        <h1>Dino Game</h1>
+
+        <div id="tabs">
+            <button onclick="switchTab('login')">Login</button>
+            <button onclick="switchTab('register')">Registro</button>
+        </div>
+
+        <div id="login-section">
+            <div class="form-group">
+                <h2>Iniciar sesión</h2>
+                <input id="login-nick" type="text" placeholder="Usuario" />
+                <input id="login-pass" type="password" placeholder="Contraseña" />
+            </div>
+            
+            <div class="button-group">
+                <button onclick="handleLogin()">Entrar</button>
+                <p id="login-msg"></p>
+            </div>
+        </div>
+
+        <div id="register-section" style="display:none">
+            <div class="form-group">
+                <h2>Registrarse</h2>
+                <input id="reg-name" type="text" placeholder="Nombre completo" />
+                <input id="reg-nick" type="text" placeholder="Usuario" />
+                <input id="reg-pass" type="password" placeholder="Contraseña" />
+            </div>
+            
+            <div class="button-group">
+                <button onclick="handleRegister()">Crear cuenta</button>
+                <p id="register-msg"></p>
+            </div>
+        </div>
+
+    </div> <script src="scripts/app.js"></script>
+</body>
+</html>
