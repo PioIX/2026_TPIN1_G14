@@ -1,127 +1,247 @@
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;700;800&display=swap');
+
+:root {
+  --bg-deep: #0a1040;
+  --bg-panel: #121a54;
+  --bg-panel-edge: #1c2668;
+  --bg-input: #1d276b;
+  --bg-input-edge: #313e94;
+
+  --green: #6dc72e;
+  --green-dark: #37790f;
+  --green-darker: #245307;
+
+  --yellow: #ffce3a;
+  --yellow-light: #fff0b0;
+  --orange: #e8720c;
+  --orange-dark: #9c3c07;
+
+  --ink: #0b1140;
+  --text: #eef1ff;
+  --text-dim: #9aa4d8;
+
+  --radius-lg: 22px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+}
+
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-    background-color: #0a0a4d;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    font-family: 'Arial Black', Impact, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  font-family: 'Nunito', sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 15% 20%, rgba(109, 199, 46, 0.10), transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(255, 206, 58, 0.08), transparent 45%),
+    linear-gradient(180deg, #0d1350 0%, var(--bg-deep) 55%, #060a2c 100%);
+  background-attachment: fixed;
 }
 
 #app {
-    background-color: #030b35;
-    padding: 20px;
-    border-radius: 15px;
-    width: 360px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  max-width: 420px;
+  background: var(--bg-panel);
+  border: 2px solid var(--bg-panel-edge);
+  border-radius: var(--radius-lg);
+  padding: 28px 26px 32px;
+  box-shadow:
+    0 0 0 6px rgba(109, 199, 46, 0.06),
+    0 18px 40px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  position: relative;
+  overflow: hidden;
 }
 
-#app h1 {
-    background-color: #0a1752;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    font-size: 20px;
-    text-align: center;
+/* faint dotted "ground" texture along the bottom, nod to a side-scroller floor */
+#app::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 10px;
+  background-image: radial-gradient(circle, rgba(109, 199, 46, 0.35) 1.5px, transparent 1.5px);
+  background-size: 14px 10px;
+  background-position: 4px 4px;
+  opacity: 0.5;
 }
 
+h1 {
+  margin: 4px 0 22px;
+  text-align: center;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 800;
+  font-size: 2.6rem;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  color: var(--yellow);
+  -webkit-text-stroke: 2px var(--green-darker);
+  text-shadow:
+    0 3px 0 var(--orange-dark),
+    0 6px 0 var(--green-darker),
+    0 10px 14px rgba(0, 0, 0, 0.5);
+  transform: rotate(-1.5deg);
+}
+
+/* --- Tabs --- */
 #tabs {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+  display: flex;
+  gap: 8px;
+  background: var(--bg-input);
+  border: 1px solid var(--bg-input-edge);
+  padding: 5px;
+  border-radius: 999px;
+  margin-bottom: 22px;
 }
 
 #tabs button {
-    flex: 1;
-    background-color: #0a1752;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 10px;
-    font-family: inherit;
-    font-size: 15px;
-    cursor: pointer;
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--text-dim);
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 10px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease, transform 0.12s ease;
 }
 
 #tabs button:hover {
-    background-color: #1a2a7a;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.05);
 }
 
-
-#login-section,
-#register-section {
-    display: flex;
-    flex-direction: column;
-    height: 100%; 
-    gap: 30px; 
+#tabs button:active {
+  transform: scale(0.97);
 }
 
-#login-section h2,
-#register-section h2 {
-    color: white;
-    font-size: 18px;
-    text-align: center;
+#tabs button:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}
+
+/* --- Form sections --- */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.form-group h2 {
+  font-family: 'Baloo 2', cursive;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--yellow-light);
+  margin: 0 0 4px;
+  text-align: center;
 }
 
 input {
-    background-color: #0a1752;
-    border: none;
-    border-radius: 10px;
-    padding: 12px 15px;
-    color: white;
-    font-family: inherit;
-    font-size: 15px;
-    outline: none;
-    width: 100%;
+  width: 100%;
+  padding: 13px 16px;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--bg-input-edge);
+  background: var(--bg-input);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 input::placeholder {
-    color: #7a8abf;
+  color: var(--text-dim);
+  font-weight: 600;
 }
 
 input:focus {
-    background-color: #1a2a7a;
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(109, 199, 46, 0.22);
 }
 
-button.btn-accion,
-#login-section button:not(#tabs button),
-#register-section button:not(#tabs button) {
-    background-color: #2e7d32;
-    padding: 12px;
-    border-radius: 12px;
-    font-size: 17px;
-    color: white;
-    border: none;
-    font-family: inherit;
-    font-weight: bold;
-    cursor: pointer;
-    width: 100%;
+/* --- Buttons (the chunky "pressable" game style) --- */
+.button-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
-#login-section button:hover,
-#register-section button:hover {
-    background-color: #3a9e40;
+.button-group button {
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  font-family: 'Baloo 2', cursive;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  color: #f4ffe9;
+  padding: 14px 20px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--green) 0%, var(--green-dark) 100%);
+  box-shadow:
+    0 5px 0 var(--green-darker),
+    0 8px 16px rgba(0, 0, 0, 0.35);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.25);
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
 }
 
-
-#login-msg,
-#register-msg {
-    color: #ffffff;
-    font-size: 13px;
-    text-align: center;
-    min-height: 18px;
+.button-group button:hover {
+  filter: brightness(1.06);
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    margin-bottom: 20px;
-    align-items: flex-start;
+.button-group button:active {
+  transform: translateY(4px);
+  box-shadow:
+    0 1px 0 var(--green-darker),
+    0 3px 8px rgba(0, 0, 0, 0.35);
+}
+
+.button-group button:focus-visible {
+  outline: 2px solid var(--yellow);
+  outline-offset: 3px;
+}
+
+/* --- Messages --- */
+.button-group p {
+  min-height: 18px;
+  margin: 2px 0 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--yellow);
+  text-align: center;
+}
+
+.button-group p:empty {
+  margin: 0;
+}
+
+/* --- Small screens --- */
+@media (max-width: 420px) {
+  h1 {
+    font-size: 2.1rem;
+  }
+
+  #app {
+    padding: 22px 18px 26px;
+  }
+}
+
+/* --- Reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
 }
