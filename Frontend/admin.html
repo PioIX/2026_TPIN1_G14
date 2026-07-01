@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="styles/admin.css">
+</head>
+<body>
+
+    <div class="admin-container">
+        <input type="radio" id="radio-add" name="admin-tabs" checked>
+        <input type="radio" id="radio-edit" name="admin-tabs">
+        <input type="radio" id="radio-delete" name="admin-tabs">
+
+        <div class="tab-nav">
+            <label for="radio-add">Añadir</label>
+            <label for="radio-edit">Editar</label>
+            <label for="radio-delete">Eliminar</label>
+        </div>
+
+        <div class="tab-content">
+            <div id="add-section" class="section">
+                <h1>Ingrese la pregunta deseada</h1>
+                <input type="text" placeholder="Pregunta" class="input">
+                <input type="text" placeholder="Respuesta" class="input">
+                <button class="boton" onclick="sendAdd()"></button>
+            </div> 
+            
+            <div id="edit-section" class="section">
+                <h2>Editar Registro Existente</h2>
+                <p>Modifica los parámetros de los elementos ya guardados en esta sección.</p>
+            </div>
+            
+            <div id="delete-section" class="section">
+                <h2>Eliminar Registro</h2>
+                <p style="color: #dc3545; font-weight: 500;">¡Atención! Las acciones en esta pestaña pueden ser irreversibles.</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+
+<!-- Los trabajos contarán con una base de datos para las preguntas / palabras / acertijos o lo que cada uno necesite para su propuesta.
+Para lo cual podrán cargar 1 pregunta / palabra / acertijo de cada categoría de prueba al crear la base de datos.
+Luego los demás datos deberán ser cargados por el usuario administrador
+Funcionamiento de este usuario:
+Se loguea con un usuario especial por ejemplo “admin”
+Al momento de ingresar, en lugar de entrar en el juego, entrará en pestañas para editar la base de datos.
+El mismo debe contar con opciones para: Agregar, Editar y Eliminar Preguntas.
+También puede eliminar registros de puntajes de usuarios o usuarios enteros directamente. -->
