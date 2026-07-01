@@ -9,6 +9,15 @@
 <body>
 
     <div class="admin-container">
+
+        <div class="admin-header">
+            <h1>Panel de Administración</h1>
+            <div class="admin-header-user">
+                <span>Hola, <strong id="admin-user"></strong></span>
+                <button class="boton boton-secundario" onclick="cerrarSesion()">Cerrar sesión</button>
+            </div>
+        </div>
+
         <input type="radio" id="radio-add" name="admin-tabs" checked>
         <input type="radio" id="radio-edit" name="admin-tabs">
         <input type="radio" id="radio-delete" name="admin-tabs">
@@ -20,33 +29,57 @@
         </div>
 
         <div class="tab-content">
+
             <div id="add-section" class="section">
-                <h1>Ingrese la pregunta deseada</h1>
-                <input type="text" placeholder="Pregunta" class="input">
-                <input type="text" placeholder="Respuesta" class="input">
-                <button class="boton" onclick="sendAdd()"></button>
-            </div> 
-            
+                <h2>Ingrese la pregunta deseada</h2>
+                <input id="add-question" type="text" placeholder="Pregunta" class="input">
+
+                <h3>Respuestas</h3>
+                <p class="hint">Marcá con el círculo cuál es la respuesta correcta.</p>
+                <div id="add-answers"></div>
+
+                <button class="boton" onclick="sendAdd()">Agregar pregunta</button>
+                <p id="add-msg" class="msg"></p>
+            </div>
+
             <div id="edit-section" class="section">
                 <h2>Editar Registro Existente</h2>
-                <p>Modifica los parámetros de los elementos ya guardados en esta sección.</p>
+                <p>Modificá la pregunta o sus respuestas y presioná "Guardar" en la fila correspondiente.</p>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Pregunta</th>
+                            <th>Respuestas</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="edit-table-body">
+                        <tr><td colspan="3">Cargando...</td></tr>
+                    </tbody>
+                </table>
+                <p id="edit-msg" class="msg"></p>
             </div>
-            
+
             <div id="delete-section" class="section">
                 <h2>Eliminar Registro</h2>
                 <p style="color: #dc3545; font-weight: 500;">¡Atención! Las acciones en esta pestaña pueden ser irreversibles.</p>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Pregunta</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="delete-table-body">
+                        <tr><td colspan="2">Cargando...</td></tr>
+                    </tbody>
+                </table>
+                <p id="delete-msg" class="msg"></p>
             </div>
+
         </div>
     </div>
 
+    <script src="scripts/admin.js"></script>
 </body>
 </html>
-
-<!-- Los trabajos contarán con una base de datos para las preguntas / palabras / acertijos o lo que cada uno necesite para su propuesta.
-Para lo cual podrán cargar 1 pregunta / palabra / acertijo de cada categoría de prueba al crear la base de datos.
-Luego los demás datos deberán ser cargados por el usuario administrador
-Funcionamiento de este usuario:
-Se loguea con un usuario especial por ejemplo “admin”
-Al momento de ingresar, en lugar de entrar en el juego, entrará en pestañas para editar la base de datos.
-El mismo debe contar con opciones para: Agregar, Editar y Eliminar Preguntas.
-También puede eliminar registros de puntajes de usuarios o usuarios enteros directamente. -->

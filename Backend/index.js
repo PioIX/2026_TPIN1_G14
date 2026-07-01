@@ -153,3 +153,139 @@ app.get("/Questions", async (req, res) => {
         });
     }
 });
+
+app.get('/admin/questions', async (req, res) => {
+    try {
+        const questions = await realizarQuery('SELECT id, question FROM Questions ORDER BY id');
+        const answers = await realizarQuery('SELECT id, answer, is_correct, is_question FROM Answers ORDER BY id');
+
+        const data = questions.map(q => ({
+            id: q.id,
+            question: q.question,
+            answers: answers.filter(a => a.is_question === q.id)
+        }));
+
+        return res.status(200).json({
+            success: true,
+            data
+        });
+    } catch (error) {
+        console.error('Error en GET /admin/questions:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor.',
+        });
+    }
+});
+
+// Crea una nueva pregunta junto con sus respuestas
+app.post('/admin/questions', async (req, res) => {
+    const { question, answers } = req.body;
+
+    if (!question || !Array.isArray(answers) || answers.length < 2) {
+        return res.status(400).json({
+            success: false,
+            message: 'La pregunta debe tener un enunciado y al menos 2 respuestas.',
+        });
+    }
+
+    const correctCount = answers.filter(a => a.is_correct).length;
+    if (correctCount !== 1) {
+        return res.status(400).json({
+            success: false,
+            message: 'Debe marcarse exactamente una respuesta como correcta.',
+        });
+    }
+
+    try {
+        const result = await realizarQuery('INSERT INTO Questions (question) VALUES (?)', [question]);
+        const questionId = result.insertId;
+
+        for (const a of answers) {
+            await realizarQuery(
+                'INSERT INTO Answers (answer, is_correct, is_question) VALUES (?, ?, ?)',
+                [a.answer, !!a.is_correct, questionId]
+            );
+        }
+
+        return res.status(201).json({
+            success: true,
+            message: 'Pregunta creada con éxito.',
+            questionId,
+        });
+    } catch (error) {
+        console.error('Error en POST /admin/questions:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor.',
+        });
+    }
+});
+
+// Edita una pregunta existente y reemplaza sus respuestas
+app.put('/admin/questions/:id', async (req, res) => {
+    const { id } = req.params;
+    const { question, answers } = req.body;
+
+    if (!question || !Array.isArray(answers) || answers.length < 2) {
+        return res.status(400).json({
+            success: false,
+            message: 'La pregunta debe tener un enunciado y al menos 2 respuestas.',
+        });
+    }
+
+    const correctCount = answers.filter(a => a.is_correct).length;
+    if (correctCount !== 1) {
+        return res.status(400).json({
+            success: false,
+            message: 'Debe marcarse exactamente una respuesta como correcta.',
+        });
+    }
+
+    try {
+        await realizarQuery('UPDATE Questions SET question = ? WHERE id = ?', [question, id]);
+
+        // Se eliminan las respuestas anteriores y se cargan las nuevas
+        await realizarQuery('DELETE FROM Answers WHERE is_question = ?', [id]);
+
+        for (const a of answers) {
+            await realizarQuery(
+                'INSERT INTO Answers (answer, is_correct, is_question) VALUES (?, ?, ?)',
+                [a.answer, !!a.is_correct, id]
+            );
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'Pregunta actualizada con éxito.',
+        });
+    } catch (error) {
+        console.error('Error en PUT /admin/questions/:id:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor.',
+        });
+    }
+});
+
+// Elimina una pregunta y todas sus respuestas asociadas
+app.delete('/admin/questions/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        await realizarQuery('DELETE FROM Answers WHERE is_question = ?', [id]);
+        await realizarQuery('DELETE FROM Questions WHERE id = ?', [id]);
+
+        return res.status(200).json({
+            success: true,
+            message: 'Pregunta eliminada con éxito.',
+        });
+    } catch (error) {
+        console.error('Error en DELETE /admin/questions/:id:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor.',
+        });
+    }
+});
+
