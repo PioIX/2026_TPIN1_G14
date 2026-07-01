@@ -1,65 +1,190 @@
-        body {
-            background-image: url('persona_hackeando.png');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
-            min-height: 100vh;
-            margin: 0;
-        }
-        input[type="radio"] {
-            display: none;
-        }
-        .tab-nav {
-            display: flex;
-            background: #0e3a0d;
-            border-bottom: 2px solid #dee2e6;
-        }
-        .tab-nav label {
-            flex: 1;
-            text-align: center;
-            padding: 16px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #6c757d;
-            transition: all 0.2s ease;
-            user-select: none;
-        }
-        .tab-nav label:hover {
-            background: #00300e;
-            color: #ffffff;
-        }
-        .tab-content {
-            padding: 30px;
-            min-height: 200px;
-        }
-        .section {
-            display: none;
-            animation: fadeIn 0.3s ease;
-            color: #ffffff  ;
-        }
-        .input{
-            width: 30%;
-            padding: 12px 16px;
-            font-size: 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            background-color: #ffffff;
-            color: #1a202c;
-            outline: none;
-            transition: all 0.2s ease-in-out;
-        }
-        #radio-add:checked ~ .tab-content #add-section,
-        #radio-edit:checked ~ .tab-content #edit-section,
-        #radio-delete:checked ~ .tab-content #delete-section {
-            display: block;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .boton{
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 600;
-        }
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+}
+
+.admin-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.admin-header h1 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+
+.admin-header-user {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+}
+
+/* ===== Tabs (radio-based, sin JS) ===== */
+
+.admin-container > input[type="radio"] {
+    display: none;
+}
+
+.tab-nav {
+    display: flex;
+    border-bottom: 2px solid #d8dde3;
+    margin-bottom: 20px;
+}
+
+.tab-nav label {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #666;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+}
+
+.tab-content .section {
+    display: none;
+    background: #fff;
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+#radio-add:checked ~ .tab-nav label[for="radio-add"],
+#radio-edit:checked ~ .tab-nav label[for="radio-edit"],
+#radio-delete:checked ~ .tab-nav label[for="radio-delete"] {
+    color: #2563eb;
+    border-bottom-color: #2563eb;
+}
+
+#radio-add:checked ~ .tab-content #add-section,
+#radio-edit:checked ~ .tab-content #edit-section,
+#radio-delete:checked ~ .tab-content #delete-section {
+    display: block;
+}
+
+/* ===== Formularios ===== */
+
+.input {
+    width: 100%;
+    padding: 10px 12px;
+    margin: 6px 0;
+    border: 1px solid #ccd3da;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.hint {
+    color: #777;
+    font-size: 0.85rem;
+    margin-top: -4px;
+}
+
+.answer-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.answer-row input[type="radio"] {
+    flex-shrink: 0;
+    accent-color: #2563eb;
+    width: 18px;
+    height: 18px;
+}
+
+.answer-row .input {
+    margin: 0;
+}
+
+.boton {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.boton:hover {
+    background: #1d4ed8;
+}
+
+.boton-secundario {
+    background: #e5e7eb;
+    color: #333;
+}
+
+.boton-secundario:hover {
+    background: #d1d5db;
+}
+
+.boton-guardar {
+    background: #16a34a;
+}
+
+.boton-guardar:hover {
+    background: #15803d;
+}
+
+.boton-eliminar {
+    background: #dc3545;
+}
+
+.boton-eliminar:hover {
+    background: #b02a37;
+}
+
+.msg {
+    margin-top: 10px;
+    font-weight: 500;
+    min-height: 1.2em;
+}
+
+/* ===== Tabla ===== */
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+}
+
+.admin-table th,
+.admin-table td {
+    text-align: left;
+    padding: 10px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
+}
+
+.admin-table th {
+    background: #f9fafb;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    color: #666;
+}
+
+.admin-table td:first-child {
+    width: 30%;
+}
+
+.admin-table td:last-child {
+    width: 100px;
+    text-align: right;
+}
