@@ -158,7 +158,6 @@ app.get('/admin/questions', async (req, res) => {
     try {
         const questions = await realizarQuery('SELECT id, question FROM Questions ORDER BY id');
         const answers = await realizarQuery('SELECT id, answer, is_correct, is_question FROM Answers ORDER BY id');
-
         const data = questions.map(q => ({
             id: q.id,
             question: q.question,

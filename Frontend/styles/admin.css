@@ -1,5 +1,3 @@
-/* Panel de administración - estilo simple, sin animaciones */
-
 * {
   box-sizing: border-box;
 }
@@ -21,7 +19,6 @@ body {
   padding: 24px;
 }
 
-/* --- Header --- */
 .admin-header {
   display: flex;
   align-items: center;
@@ -46,7 +43,6 @@ body {
   font-size: 0.9rem;
 }
 
-/* --- Botones --- */
 .boton {
   background: #6fbf73;
   color: #ffffff;
@@ -71,7 +67,6 @@ body {
   background: #e2ede2;
 }
 
-/* --- Tabs (radio + label) --- */
 input[name="admin-tabs"] {
   display: none;
 }
@@ -102,7 +97,6 @@ input[name="admin-tabs"] {
   border-bottom-color: #6fbf73;
 }
 
-/* --- Secciones --- */
 .section {
   display: none;
 }
@@ -131,7 +125,6 @@ input[name="admin-tabs"] {
   margin-top: 0;
 }
 
-/* --- Inputs --- */
 .input,
 input[type="text"] {
   width: 100%;
@@ -150,7 +143,6 @@ input[type="text"]:focus {
   border-color: #6fbf73;
 }
 
-/* --- Tabla --- */
 .admin-table {
   width: 100%;
   border-collapse: collapse;
@@ -174,7 +166,6 @@ input[type="text"]:focus {
   background: #f8fbf7;
 }
 
-/* --- Mensajes --- */
 .msg {
   font-size: 0.85rem;
   color: #2f6b34;
