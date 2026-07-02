@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="styles/admin.css">
+</head>
+<body>
+
+    <div class="admin-container">
+
+        <div class="admin-header">
+            <h1>Panel de Administración</h1>
+            <div class="admin-header-user">
+                <span>Hola, <strong id="admin-user"></strong></span>
+                <button class="boton boton-secundario" onclick="cerrarSesion()">Cerrar sesión</button>
+            </div>
+        </div>
+
+        <input type="radio" id="radio-add" name="admin-tabs" checked>
+        <input type="radio" id="radio-edit" name="admin-tabs">
+        <input type="radio" id="radio-delete" name="admin-tabs">
+
+        <div class="tab-nav">
+            <label for="radio-add">Añadir</label>
+            <label for="radio-edit">Editar</label>
+            <label for="radio-delete">Eliminar</label>
+        </div>
+
+        <div class="tab-content">
+
+            <div id="add-section" class="section">
+                <h2>Ingrese la pregunta deseada</h2>
+                <input id="add-question" type="text" placeholder="Pregunta" class="input">
+
+                <h3>Respuestas</h3>
+                <p class="hint">Marcá con el círculo cuál es la respuesta correcta.</p>
+                <div id="add-answers"></div>
+
+                <button class="boton" onclick="sendAdd()">Agregar pregunta</button>
+                <p id="add-msg" class="msg"></p>
+            </div>
+
+            <div id="edit-section" class="section">
+                <h2>Editar Registro Existente</h2>
+                <p>Modificá la pregunta o sus respuestas y presioná "Guardar" en la fila correspondiente.</p>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Pregunta</th>
+                            <th>Respuestas</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="edit-table-body">
+                        <tr><td colspan="3">Cargando...</td></tr>
+                    </tbody>
+                </table>
+                <p id="edit-msg" class="msg"></p>
+            </div>
+
+            <div id="delete-section" class="section">
+                <h2>Eliminar Registro</h2>
+                <p style="color: #dc3545; font-weight: 500;">¡Atención! Las acciones en esta pestaña pueden ser irreversibles.</p>
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Pregunta</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="delete-table-body">
+                        <tr><td colspan="2">Cargando...</td></tr>
+                    </tbody>
+                </table>
+                <p id="delete-msg" class="msg"></p>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="scripts/admin.js"></script>
+</body>
+</html>

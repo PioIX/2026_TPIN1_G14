@@ -34,8 +34,21 @@ async function handleLogin() {
         if (response.ok && data.success) {
             // Guarda los datos del usuario de forma temporal en el navegador
             sessionStorage.setItem('user', JSON.stringify(data.user));
+<<<<<<< HEAD
         }
 
+=======
+
+            // 6. Redirigir según el tipo de usuario
+            if (data.user.is_ad) {
+                window.location.href = 'admin.html';
+            } else {
+                window.location.href = 'index.html'; // TODO: reemplazar por la página real del juego
+            }
+        }
+
+
+>>>>>>> ca1b3a43343cbd718e824bd2ccb500d7d81dc343
     } catch (error) {
         // 6. manejar el error
         msg.textContent = 'No se pudo conectar con el servidor.';
