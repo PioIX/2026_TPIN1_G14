@@ -1,64 +1,106 @@
 const API_URL = 'http://localhost:4000';
 const CANTIDAD_RESPUESTAS = 4; // Cantidad de opciones por pregunta en el formulario de "Añadir"
+const MODO = "test"
 
 /* ===================== Protección de acceso ===================== */
 
 function verificarAcceso() {
     const userRaw = sessionStorage.getItem('user');
+    let user
+    if (MODO != "test") {
+        if (!userRaw) {
+            window.location.href = 'login.html';
+            return null;
+        }
 
-    if (!userRaw) {
-        //window.location.href = 'login.html';
-        return null;
+        user = JSON.parse(userRaw);
+
+        if (!user.is_ad) {
+            //Usuario logueado pero sin permisos de administrador
+            window.location.href = 'login.html';
+            return null;
+        }
+    } else {
+        user = JSON.parse(userRaw);
     }
-
-    const user = JSON.parse(userRaw);
-
-    if (!user.is_ad) {
-        // Usuario logueado pero sin permisos de administrador
-        //window.location.href = 'login.html';
-        return null;
-    }
-
     return user;
 }
 
 /* ===================== Inicialización ===================== */
 
-document.addEventListener('DOMContentLoaded', () => {
-    const user = verificarAcceso();
-    if (!user) return;
-
+function cargarTablas() {
+    let user
+    if (MODO != "test") {
+        user = verificarAcceso();
+        if (!user) return;
+    } else {
+        user = "test"
+    }
     document.getElementById('admin-user').textContent = user.fullName;
 
     construirFormularioAgregar();
     cargarPreguntas();
-});
+}
 
 /* ===================== Carga y render de preguntas ===================== */
 
 async function cargarPreguntas() {
-    const editBody   = document.getElementById('edit-table-body');
+    const editBody = document.getElementById('edit-table-body');
     const deleteBody = document.getElementById('delete-table-body');
 
-    editBody.innerHTML   = '<tr><td colspan="3">Cargando...</td></tr>';
+    editBody.innerHTML = '<tr><td colspan="3">Cargando...</td></tr>';
     deleteBody.innerHTML = '<tr><td colspan="2">Cargando...</td></tr>';
+
+    let editTabla = ""
+    let deleteTabla = ""
 
     try {
         const response = await fetch(`${API_URL}/admin/questions`);
         const data = await response.json();
-
-        if (!data.success) {
-            editBody.innerHTML   = `<tr><td colspan="3">${data.message}</td></tr>`;
-            deleteBody.innerHTML = `<tr><td colspan="2">${data.message}</td></tr>`;
-            return;
+        console.log(data)
+        let datos = data.data
+        if (data.success) {
+            for (let i = 0; i < datos.length; i++) {
+                let respuestas = datos[i].answers
+                editTabla += "<tr>"
+                deleteTabla += "<tr>"
+                editTabla += `<td colspan="3">${datos[i].question}</td>`
+                deleteTabla += `<td colspan="3">${datos[i].question}</td>`
+                editTabla += `<td>
+                    <button class="boton" onclick="editarPregunta(${datos[i].id})">
+                        Editar
+                    </button> </td>`;
+                deleteTabla += `<td>
+                    <button class="boton" onclick="eliminarPregunta(${datos[i].id})">
+                        Eliminar
+                    </button> </td>`;
+                for (let j = 0; j < respuestas.length; j++) {
+                    editTabla += `<td colspan="3"> ${respuestas[j].answer}</td>`
+                    editTabla += `<td colspan="3">${respuestas[j].is_correct} </td>`
+                    deleteTabla += `<td colspan="3"> ${respuestas[j].answer}</td>`
+                    deleteTabla += `<td colspan="3">${respuestas[j].is_correct} </td>`
+                    editTabla += `<td>
+                        <button class="boton" onclick="editarPregunta(${datos[i].id})">
+                            Editar
+                        </button> </td>`;
+                    deleteTabla += `<td>
+                        <button class="boton" onclick="eliminarPregunta(${datos[i].id})">
+                            Eliminar
+                        </button> </td>`;
+                }
+                editTabla += `</tr>`
+                deleteTabla += `</tr>`
+                document.getElementById('edit-table-body').innerHTML = editTabla;
+                document.getElementById('delete-table-body').innerHTML = deleteTabla;
+            }
         }
 
-        renderTablaEditar(data.data);
-        renderTablaEliminar(data.data);
+        //renderTablaEditar(data.data);
+        //renderTablaEliminar(data.data);
 
     } catch (error) {
         const msg = 'No se pudo conectar con el servidor.';
-        editBody.innerHTML   = `<tr><td colspan="3">${msg}</td></tr>`;
+        editBody.innerHTML = `<tr><td colspan="3">${msg}</td></tr>`;
         deleteBody.innerHTML = `<tr><td colspan="2">${msg}</td></tr>`;
     }
 }
@@ -122,33 +164,30 @@ async function sendAdd() {
 
 /* ===================== Tab: Editar ===================== */
 
-function renderTablaEditar(preguntas) {
-    const body = document.getElementById('edit-table-body');
-    body.innerHTML = '';
+async function editarPregunta(id) {
 
-    if (preguntas.length === 0) {
-        body.innerHTML = '<tr><td colspan="3">No hay preguntas cargadas.</td></tr>';
+    let nuevaPregunta = prompt("Ingrese la nueva pregunta:");
+
+    if (nuevaPregunta == null || nuevaPregunta == "") {
         return;
     }
 
-    preguntas.forEach(p => {
-        const fila = document.createElement('tr');
-
-        const respuestasHtml = p.answers.map((a, i) => `
-            <div class="answer-row">
-                <input type="radio" name="edit-correct-${p.id}" value="${i}" ${a.is_correct ? 'checked' : ''}>
-                <input type="text" class="input edit-answer-text" value="${escapeHtml(a.answer)}">
-            </div>
-        `).join('');
-
-        fila.innerHTML = `
-            <td><input type="text" class="input edit-question-text" value="${escapeHtml(p.question)}"></td>
-            <td>${respuestasHtml}</td>
-            <td><button class="boton boton-guardar" onclick="guardarEdicion(${p.id}, this)">Guardar</button></td>
-        `;
-
-        body.appendChild(fila);
+    const respuesta = await fetch(`/questions/${id}`, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            question: nuevaPregunta
+        })
     });
+
+    if (respuesta.ok) {
+        alert("Pregunta modificada correctamente.");
+        cargarTablas();
+    } else {
+        alert("Error al modificar la pregunta.");
+    }
 }
 
 async function guardarEdicion(id, boton) {
