@@ -8,19 +8,20 @@ let contexto; // Se usa para dibujar adentro del canvas
 let anchoDino = 60; 
 let altoDino = 65;
 let dinoX = 50;
-// Variable global para saber si actualmente está agachado (agrégala idealmente arriba con tus variables de estado)
-let estaAgachado = false;
+let estaAgachado = false
+let dinoY = altoTablero - altoDino; //pos dino 
+let estaVolando;
 
-// Al cambiar altoDino arriba, esta variable se calcula sola 
-// y se asegura de que el dino siga pisando el suelo y no quede flotando.
-let dinoY = altoTablero - altoDino; 
+let imgDino; //sprite
+let imgDinoCorre1; //sprite
+let imgDinoCorre2; //sprite
+let imgDinoCorreAgachado1; //sprite
+let imgDinoCorreAgachado2; //sprite
+let imgPajaro1; //strite
+let imgPajaro2; //sprite
 
-let imgDino; 
-let imgDinoCorre1; 
-let imgDinoCorre2; 
-let imgDinoCorreAgachado1; 
-let imgDinoCorreAgachado2; 
-
+// --- VARIABLES CONTROLES ---
+let flechaEstaPresionada;
 // Objeto dino con sus propiedades
 let dino = {
     x : dinoX,
@@ -45,8 +46,8 @@ let imgCactus3;
 
 // --- FÍSICA Y ESTADO DEL JUEGO ---
 let velocidadX = -8; // Velocidad del juego
-let velocidadY = 0;
-let gravedad = 0.8;  
+let velocidadY = 0; //mov vertical
+let gravedad = 0.8; 
 
 let juegoTerminado = false;
 let puntaje = 0;
@@ -148,10 +149,30 @@ function actualizar() {
         contexto.drawImage(cactus.img, cactus.x, cactus.y, cactus.ancho, cactus.alto);
 
         // Chequear si el dino se chocó con este cactus
-        //Error si dino muere agachado queda se genera el sprite de muerte correctamente pero tambien queda el de agachado
-        if (detectarColision(dino, cactus)) {
-            juegoTerminado = true; // Perdiste
-            imgDino.src = "./img/dino-dead.png"; // Cambia la imagen a la del dino muerto
+              if (detectarColision(dino, cactus)) {
+            juegoTerminado = true;
+
+            // Guardamos el rectángulo viejo (puede ser el agachado, más ancho y más bajo)
+            let anchoViejo = dino.ancho;
+            let xVieja = dino.x;
+            let yVieja = dino.y;
+            let altoViejo = dino.alto;
+
+            // Si murió agachado, compensamos la diferencia de ancho
+            // para que el frente del dino no "retroceda" al pasar a tamaño normal
+            let diferenciaAncho = anchoDino - anchoViejo; // va a dar negativo si estaba agachado
+            dino.x = dino.x - diferenciaAncho; 
+            // (restamos porque si anchoViejo era mayor, diferenciaAncho es negativo,
+            //  y queremos que dino.x aumente para "adelantar" el dino)
+
+            dino.ancho = anchoDino;
+            dino.alto = altoDino;
+            dino.y = altoTablero - dino.alto;
+
+            // Borramos solo el área vieja del dino (con un poquito de margen por las dudas)
+            contexto.clearRect(xVieja - 2, yVieja - 2, anchoViejo + 4, altoViejo + 4);
+
+            imgDino.src = "./img/dino-dead.png";
             imgDino.onload = function() {
                 contexto.drawImage(imgDino, dino.x, dino.y, dino.ancho, dino.alto);
             }
@@ -174,18 +195,30 @@ function moverDino(e) {
     }
 
     // Saltar
-    if ((e.code == "Space" || e.code == "ArrowUp") && dino.y == dinoY && !estaAgachado) {
-        velocidadY = -15;
-        console.log("Salto")
+    if ((e.code == "Space" || e.code == "ArrowUp") && dino.y == dinoY && !estaAgachado) { //funccion para saltar
+        velocidadY = -15; //genera salto
     }
-    
+    //criminal este comentado es horrible pero bueno
     // Agacharse
-    if (e.code == "ArrowDown" && dino.y == dinoY) {
-        estaAgachado = true;
-        dino.alto = 45;
-        dino.ancho = 80;
-        dino.y = altoTablero - dino.alto; //recalculamos asi no 
-        console.log("Se agacho")
+    if (e.code == "ArrowDown" && dino.y == dinoY) { //si se toca flecha abajo y se esta tocando el suelo
+        estaAgachado = true; // cambiamos varia ble para q se ejecutte animacion
+        dino.alto = 45; //ajustamos tamaño dino
+        dino.ancho = 80; //lo mismo de arriba
+        dino.y = altoTablero - dino.alto; //recalculamos asi no queda flotando
+    } else if(e.code == "ArrowDown" && dino.y != dinoY) { //si se toca flecha abajo y se esta en el aire
+        flechaEstaPresionada = true;
+        velocidadY = 10; //En el juego original cuando se aprieta flecha bajo el dino baja mas rapido si esta en  el aikre esto lo hace
+        clearInterval(estaVolando);
+        estaVolando = setInterval(() => { //set interval permite establecer un tiempo entre cada ejecucion los argumentos usados son el codigo a ejecutar y los milisegundos entre ejecucion
+            if (dino.y == dinoY && flechaEstaPresionada) {//solo agachamos SI la flecha sigue apretada
+                estaAgachado = true; //si es verdad pone a esta agachado como verdadero lo cual hara que se agache el dino (funccion animaciones : 125-139)
+                dino.alto = 45; //ajustamos tamaño dino
+                dino.ancho = 80; //lo mismo de arriba
+                clearInterval(estaVolando); //termina el "bucle" por asi decirlo
+            } else if (dino.y == dinoY) { // si aterriza pero no solto la flecha abajo no hacemos nada y terminamos el intervalo
+                clearInterval(estaVolando);
+            }
+        }, 20); //se ejecuta cada 20 milisegundoss
     }
 }
 
@@ -194,10 +227,11 @@ function soltarDino(e) {
     if (juegoTerminado) return;
 
     if (e.code == "ArrowDown") {
+        flechaEstaPresionada = false; //se aclara ya nio esta apretada
+        clearInterval(estaVolando); //se termina cualquier intervalo
         estaAgachado = false;//Cambiamos la global y reiniciamos al default las variables del dino
         dino.alto = altoDino; 
         dino.ancho = anchoDino;
-        dino.y = dinoY;
     }
 }
 
