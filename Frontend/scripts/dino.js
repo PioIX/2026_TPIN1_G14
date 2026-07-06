@@ -4,6 +4,10 @@ let anchoTablero = 750;
 let altoTablero = 250;
 let contexto; // Se usa para dibujar adentro del canvas
 
+// --- VARIABLES JUEGO ---
+let enPausaPorHito = false; // Nos dice si el juego está congelado temporalmente
+let yaPauso1000 = false;    // Evita que la pausa se active infinitamente en ese mismo frame
+
 // --- VARIABLES DEL DINO ---
 let anchoDino = 60; 
 let altoDino = 65;
@@ -149,7 +153,7 @@ function actualizar() {
         contexto.drawImage(cactus.img, cactus.x, cactus.y, cactus.ancho, cactus.alto);
 
         // Chequear si el dino se chocó con este cactus
-              if (detectarColision(dino, cactus)) {
+        if (detectarColision(dino, cactus)) {
             juegoTerminado = true;
 
             // Guardamos el rectángulo viejo (puede ser el agachado, más ancho y más bajo)
@@ -179,6 +183,19 @@ function actualizar() {
         }
     }
 
+    if (juegoTerminado || enPausaPorHito) {
+        return; // Si está pausado, no actualiza posiciones ni limpia la pantalla
+    }
+
+    // ... (resto del código de actualizar) ...
+
+    // Al final, en la sección de puntaje:
+    if ((puntaje % 1000 == 0 && puntaje != 0) && !yaPauso1000) {
+        enPausaPorHito = true;
+        yaPauso1000 = true
+        setTimeout(() => {enPausaPorHito = false;}, 10000);
+
+    }
     // --- Lógica del Puntaje ---
     // Hay que cambiarlo arriba
     contexto.fillStyle="black";
@@ -190,8 +207,8 @@ function actualizar() {
 // ----------------------- Funciones de agachado y salto ------------------------
 
 function moverDino(e) {
-    if (juegoTerminado) {
-        return; 
+    if (juegoTerminado || enPausaPorHito){
+        return;
     }
 
     // Saltar
@@ -238,9 +255,9 @@ function soltarDino(e) {
 
 // Función para generar cactus aleatorios
 function colocarCactus() {
-    if (juegoTerminado) {
+    if (juegoTerminado || enPausaPorHito){
         return;
-    }
+    } 
 
     // Objeto base para el nuevo cactus
     let cactus = {
