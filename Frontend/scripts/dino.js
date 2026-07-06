@@ -285,3 +285,27 @@ function detectarColision(a, b) {
            a.y < b.y + b.alto &&    // El borde superior de 'a' no pasa el borde inferior de 'b'
            a.y + a.alto > b.y;      // El borde inferior de 'a' ya pasó el borde superior de 'b'
 }
+
+function resetear() {
+    //Reiniciar estado del juego y puntaje
+    juegoTerminado = false;
+    puntaje = 0;
+    
+    //Limpiar la lista de cactus para que empiece vacío
+    listaCactus = [];
+    
+    //Devolver al dino a sus dimensiones y posición iniciales
+    estaAgachado = false;
+    flechaEstaPresionada = false;
+    clearInterval(estaVolando);
+    
+    dino.ancho = anchoDino;
+    dino.alto = altoDino;
+    dino.x = dinoX;
+    dino.y = altoTablero - altoDino;
+    
+    velocidadY = 0; // Resetear velocidad de salto o caida
+
+    //Restaurar la imagen original del dino (sacar la de muerto)
+    imgDino.src = "./img/dino.png";
+}
