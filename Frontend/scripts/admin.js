@@ -159,10 +159,11 @@ async function sendAdd() {
 async function editarPregunta(id) {
 
     let nuevaPregunta = prompt("Ingrese la nueva pregunta:");
+    let respuesta1 = prompt("Ingrese una respuesta:");
+    let respuesta2 = prompt("Ingrese una respuesta:");
+    let respuesta3 = prompt("Ingrese una respuesta:");
+    let respuesta4 = prompt("Ingrese una respuesta:");
 
-    if (nuevaPregunta == null || nuevaPregunta == "") {
-        return;
-    }
 
     const respuesta = await fetch(`http://localhost:4000/admin/questions`, {
         method: "PUT",
@@ -171,6 +172,11 @@ async function editarPregunta(id) {
         },
         body: JSON.stringify({
             question: nuevaPregunta,
+            respuesta1: 
+            respuesta2: 
+            respuesta3: 
+            respuesta4: 
+
             id: id
         })
     });
