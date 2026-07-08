@@ -223,12 +223,11 @@ app.post('/admin/questions', async (req, res) => {
 });
 
 // Edita una pregunta existente y reemplaza sus respuestas
-app.put('/admin/questions/:id', async (req, res) => {
-    const { id } = req.params;
+app.put('/admin/questions', async (req, res) => {
+    const id = req.body.id;
     const { question, answers } = req.body;
-
     if (!question || !Array.isArray(answers) || answers.length < 2) {
-        return res.status(400).json({
+        return res.status(400).send({
             success: false,
             message: 'La pregunta debe tener un enunciado y al menos 2 respuestas.',
         });
@@ -236,7 +235,7 @@ app.put('/admin/questions/:id', async (req, res) => {
 
     const correctCount = answers.filter(a => a.is_correct).length;
     if (correctCount !== 1) {
-        return res.status(400).json({
+        return res.status(400).send({
             success: false,
             message: 'Debe marcarse exactamente una respuesta como correcta.',
         });
@@ -255,13 +254,14 @@ app.put('/admin/questions/:id', async (req, res) => {
             );
         }
 
-        return res.status(200).json({
+        return res.status(200).send({
             success: true,
             message: 'Pregunta actualizada con éxito.',
         });
+        
     } catch (error) {
         console.error('Error en PUT /admin/questions/:id:', error);
-        return res.status(500).json({
+        return res.status(500).send({
             success: false,
             message: 'Error interno del servidor.',
         });

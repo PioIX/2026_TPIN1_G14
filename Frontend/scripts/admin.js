@@ -66,28 +66,20 @@ async function cargarPreguntas() {
                 deleteTabla += "<tr>"
                 editTabla += `<td colspan="3">${datos[i].question}</td>`
                 deleteTabla += `<td colspan="3">${datos[i].question}</td>`
-                editTabla += `<td>
-                    <button class="boton" onclick="editarPregunta(${datos[i].id})">
-                        Editar
-                    </button> </td>`;
-                deleteTabla += `<td>
-                    <button class="boton" onclick="eliminarPregunta(${datos[i].id})">
-                        Eliminar
-                    </button> </td>`;
                 for (let j = 0; j < respuestas.length; j++) {
                     editTabla += `<td colspan="3"> ${respuestas[j].answer}</td>`
                     editTabla += `<td colspan="3">${respuestas[j].is_correct} </td>`
                     deleteTabla += `<td colspan="3"> ${respuestas[j].answer}</td>`
                     deleteTabla += `<td colspan="3">${respuestas[j].is_correct} </td>`
-                    editTabla += `<td>
+                }
+                editTabla += `<td>
                         <button class="boton" onclick="editarPregunta(${datos[i].id})">
                             Editar
                         </button> </td>`;
-                    deleteTabla += `<td>
+                deleteTabla += `<td>
                         <button class="boton" onclick="eliminarPregunta(${datos[i].id})">
                             Eliminar
                         </button> </td>`;
-                }
                 editTabla += `</tr>`
                 deleteTabla += `</tr>`
                 document.getElementById('edit-table-body').innerHTML = editTabla;
@@ -172,16 +164,18 @@ async function editarPregunta(id) {
         return;
     }
 
-    const respuesta = await fetch(`/questions/${id}`, {
+    const respuesta = await fetch(`http://localhost:4000/admin/questions`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({
-            question: nuevaPregunta
+            question: nuevaPregunta,
+            id: id
         })
     });
-
+    let response = await respuesta.json()
+    console.log(response)
     if (respuesta.ok) {
         alert("Pregunta modificada correctamente.");
         cargarTablas();
