@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,29 @@
         <div class="contenedor-canvas">
             <canvas id="board"></canvas>
         </div>
-    
+
+        <div id="contenedor-kahoot">
+            <div class="kahoot-pregunta">
+                <h2 id="kahoot-pregunta-texto">¿Aquí va la pregunta del Dino Trivia?</h2>
+            </div>
+            
+            <div class="kahoot-grid">
+                <button class="kahoot-btn btn-rojo" onclick="enviarRespuesta(1)">
+                    <span class="kahoot-icono">▲</span>
+                    <span id="kahoot-txt-1">Primera opción</span>
+                </button>
+
+                <button class="kahoot-btn btn-azul" onclick="enviarRespuesta(2)">
+                    <span class="kahoot-icono">◆</span>
+                    <span id="kahoot-txt-2">Segunda opción</span>
+                </button>
+
+                <button class="kahoot-btn btn-amarillo" onclick="enviarRespuesta(3)">
+                    <span class="kahoot-icono">●</span>
+                    <span id="kahoot-txt-3">Tercera opción</span>
+                </button>
+            </div>
+        </div>
         <div id="barra-reinicio" class="barra-inferior">
             <button class="btn-accion" id="btn-reiniciar" onclick="resetear()">Reiniciar Juego</button>
         </div>
