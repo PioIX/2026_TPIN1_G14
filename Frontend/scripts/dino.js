@@ -6,7 +6,8 @@ let contexto; // Se usa para dibujar adentro del canvas
 
 // --- VARIABLES JUEGO ---
 let enPausaPorHito = false; // Nos dice si el juego está congelado temporalmente
-let yaPauso1000 = false;    // Evita que la pausa se active infinitamente en ese mismo frame
+let yaPauso1000 = false;    // Evita que la pausa se active infinitamente en ese mismo hito
+let hitoTimeoutId = null;   // Guardamos el id del setTimeout para poder cancelarlo en el reset
 
 // --- VARIABLES DEL DINO ---
 let anchoDino = 60; 
@@ -115,19 +116,25 @@ function actualizar() {
     contexto.clearRect(0, 0, tablero.width, tablero.height);
 
     // --- Lógica del Dino ---
-    velocidadY += gravedad;
-    
-    //Calcula donde está el piso según el alto actual del dino
-    let pisoActual = altoTablero - dino.alto; 
+    // BUGFIX: toda la física del dino queda envuelta en "!enPausaPorHito"
+    // para que la pausa de hito realmente congele el juego.
+    if (!enPausaPorHito) {
+        velocidadY += gravedad;
 
-    // Aplica la gravedad usando el pisoActual en lugar del dinoY fijo
-    dino.y = Math.min(dino.y + velocidadY, pisoActual); 
+        //Calcula donde está el piso según el alto actual del dino
+        let pisoActual = altoTablero - dino.alto; 
+
+        // Aplica la gravedad usando el pisoActual en lugar del dinoY fijo
+        dino.y = Math.min(dino.y + velocidadY, pisoActual); 
+    }
+
+    let pisoActual = altoTablero - dino.alto;
 
     // Lógica para animar los sprites al correr
     let imagenActualDino = imgDino; 
 
-    // Revisamos si está tocando el pisoActual
-    if (dino.y == pisoActual) { 
+    // Revisamos si está tocando el pisoActual (solo animamos si no está pausado)
+    if (!enPausaPorHito && dino.y == pisoActual) { 
         if (Math.floor(puntaje / 10) % 2 === 0) {
             if (estaAgachado === false){ 
                 imagenActualDino = imgDinoCorre1;
@@ -149,11 +156,15 @@ function actualizar() {
     // --- Lógica de los Cactus ---
     for (let i = 0; i < listaCactus.length; i++) {
         let cactus = listaCactus[i];
-        cactus.x += velocidadX; // Mueve el cactus hacia la izquierda
+
+        // BUGFIX: los cactus no se mueven ni chocan mientras está pausado por hito
+        if (!enPausaPorHito) {
+            cactus.x += velocidadX; // Mueve el cactus hacia la izquierda
+        }
         contexto.drawImage(cactus.img, cactus.x, cactus.y, cactus.ancho, cactus.alto);
 
         // Chequear si el dino se chocó con este cactus
-        if (detectarColision(dino, cactus)) {
+        if (!enPausaPorHito && detectarColision(dino, cactus)) {
             juegoTerminado = true;
 
             // Guardamos el rectángulo viejo (puede ser el agachado, más ancho y más bajo)
@@ -169,9 +180,16 @@ function actualizar() {
             // (restamos porque si anchoViejo era mayor, diferenciaAncho es negativo,
             //  y queremos que dino.x aumente para "adelantar" el dino)
 
+            // BUGFIX: en vez de forzar dino.y al piso (lo que hacía que el sprite
+            // de muerte se "teletransportara" hacia abajo si moría en el aire),
+            // mantenemos fijo el borde inferior ("los pies") del dino al pasar
+            // al tamaño normal. Si murió agachado en el piso, los pies siguen
+            // tocando el piso. Si murió saltando, se queda flotando en el aire
+            // exactamente donde chocó.
+            let piesViejos = yVieja + altoViejo;
             dino.ancho = anchoDino;
             dino.alto = altoDino;
-            dino.y = altoTablero - dino.alto;
+            dino.y = piesViejos - dino.alto;
 
             // Borramos solo el área vieja del dino (con un poquito de margen por las dudas)
             contexto.clearRect(xVieja - 2, yVieja - 2, anchoViejo + 4, altoViejo + 4);
@@ -184,20 +202,25 @@ function actualizar() {
     }
 
     if (juegoTerminado || enPausaPorHito) {
-        return; // Si está pausado, no actualiza posiciones ni limpia la pantalla
+        return; // Si está pausado, no actualiza puntaje ni genera cactus nuevos
     }
-
-    // ... (resto del código de actualizar) ...
 
     // Al final, en la sección de puntaje:
-    if ((puntaje % 1000 == 0 && puntaje != 0) && !yaPauso1000) {
-        enPausaPorHito = true;
-        yaPauso1000 = true
-        setTimeout(() => {enPausaPorHito = false;}, 10000);
-
+    // BUGFIX: cuando puntaje NO es múltiplo de 1000, reseteamos yaPauso1000
+    // para que la pausa se pueda volver a activar en el próximo múltiplo (2000, 3000, ...)
+    if (puntaje % 1000 == 0 && puntaje != 0) {
+        if (!yaPauso1000) {
+            enPausaPorHito = true;
+            yaPauso1000 = true;
+            hitoTimeoutId = setTimeout(() => {
+                enPausaPorHito = false;
+            }, 10000);
+        }
+    } else {
+        yaPauso1000 = false;
     }
+
     // --- Lógica del Puntaje ---
-    // Hay que cambiarlo arriba
     contexto.fillStyle="black";
     contexto.font="20px courier";
     puntaje++; // Sube el puntaje constantemente
@@ -307,7 +330,17 @@ function resetear() {
     //Reiniciar estado del juego y puntaje
     juegoTerminado = false;
     puntaje = 0;
-    
+
+    // BUGFIX: si se resetea mientras estaba pausado por hito, hay que
+    // apagar la pausa y cancelar el timeout pendiente, si no el juego
+    // arranca congelado (o se descongela solo en un momento random).
+    enPausaPorHito = false;
+    yaPauso1000 = false;
+    if (hitoTimeoutId !== null) {
+        clearTimeout(hitoTimeoutId);
+        hitoTimeoutId = null;
+    }
+
     //Limpiar la lista de cactus para que empiece vacío
     listaCactus = [];
     
