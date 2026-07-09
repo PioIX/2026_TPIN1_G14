@@ -8,6 +8,7 @@ let contexto; // Se usa para dibujar adentro del canvas
 let enPausaPorHito = false; // Nos dice si el juego está congelado temporalmente
 let yaPauso1000 = false;    // Evita que la pausa se active infinitamente en ese mismo hito
 let hitoTimeoutId = null;   // Guardamos el id del setTimeout para poder cancelarlo en el reset
+let triviaIntervalId = null;
 
 // --- VARIABLES DEL DINO ---
 let anchoDino = 60; 
@@ -208,17 +209,50 @@ function actualizar() {
     // Al final, en la sección de puntaje:
     // BUGFIX: cuando puntaje NO es múltiplo de 1000, reseteamos yaPauso1000
     // para que la pausa se pueda volver a activar en el próximo múltiplo (2000, 3000, ...)
-    if (puntaje % 1000 == 0 && puntaje != 0) {
+
+    if (puntaje % 1000 === 0 && puntaje !== 0) {
         if (!yaPauso1000) {
             enPausaPorHito = true;
             yaPauso1000 = true;
-            hitoTimeoutId = setTimeout(() => {
-                enPausaPorHito = false;
-            }, 10000);
+            generarPreguntaYRspuesta();
+            // 1. Mostrar la trivia y ocultar el canvas del juego
+            document.getElementById('contenedor-kahoot').style.display = 'block';
+            document.getElementById('board').style.display = 'none';
+
+            // 2. Configurar el tiempo inicial en la pantalla
+            let tiempoRestante = 10;
+            const componenteTimer = document.getElementById('kahoot-timer');
+            componenteTimer.textContent = tiempoRestante;
+
+            // 3. Limpiar cualquier contador viejo por seguridad antes de empezar
+            if (triviaIntervalId) {
+                clearInterval(triviaIntervalId);
+            }
+
+            // 4. Iniciar el contador regresivo de 1 en 1 segundo (1000ms)
+            triviaIntervalId = setInterval(() => {
+                tiempoRestante--;
+                componenteTimer.textContent = tiempoRestante; // Actualiza el número en el HTML
+
+                // Cuando el tiempo llega a cero, frena el reloj y vuelve al juego
+                if (tiempoRestante <= 0) {
+                    clearInterval(triviaIntervalId);
+                    enPausaPorHito = false;
+                    document.getElementById('contenedor-kahoot').style.display = 'none';
+                    document.getElementById('board').style.display = 'block';
+                }
+            }, 1000);
         }
     } else {
         yaPauso1000 = false;
+        
+        // Si no estamos en el hito, nos aseguramos de que el juego se vea y la trivia esté oculta
+        if (!enPausaPorHito) {
+            document.getElementById('contenedor-kahoot').style.display = 'none';
+            document.getElementById('board').style.display = 'block';
+        }
     }
+
 
     // --- Lógica del Puntaje ---
     contexto.fillStyle="black";
@@ -358,4 +392,14 @@ function resetear() {
 
     //Restaurar la imagen original del dino (sacar la de muerto)
     imgDino.src = "./img/dino.png";
+}
+
+async function fetchUserData(userId) {
+  try {
+    const response = await fetch(`https://example.com{userId}`);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
 }
