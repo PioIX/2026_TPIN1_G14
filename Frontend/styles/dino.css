@@ -58,11 +58,11 @@ canvas {
 /* IMPORTANTE: Agregar "position: relative" a tu contenedor para que el timer se guíe de él */
 #contenedor-kahoot {
     position: relative; 
-    background-color: #ffffff;
+    background-color: lightgray;
     border: 3px solid #333;
     border-radius: 8px;
-    padding: 20px;
-    margin-top: 15px;
+    padding: 50px;
+    margin-top: 10px;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     font-family: sans-serif;
 }
@@ -72,7 +72,7 @@ canvas {
     position: absolute;
     top: 15px;
     right: 15px;
-    background-color: #e21b3c; /* Color rojo llamativo */
+    background-color: #e21b3c;
     color: white;
     font-size: 1.3rem;
     font-weight: bold;
@@ -95,7 +95,7 @@ canvas {
 /* Distribución en 3 columnas para las respuestas */
 .kahoot-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
 }
 
@@ -129,7 +129,7 @@ canvas {
     margin-right: 10px;
 }
 
-/* Colores clásicos de Kahoot */
 .btn-rojo { background-color: #e21b3c; }
 .btn-azul { background-color: #1368ce; }
 .btn-amarillo { background-color: #d89e00; }
+.btn-verde { background-color: #26890c; }

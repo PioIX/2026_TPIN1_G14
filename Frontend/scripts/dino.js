@@ -210,11 +210,16 @@ function actualizar() {
     // BUGFIX: cuando puntaje NO es múltiplo de 1000, reseteamos yaPauso1000
     // para que la pausa se pueda volver a activar en el próximo múltiplo (2000, 3000, ...)
 
-    if (puntaje % 1000 === 0 && puntaje !== 0) {
+// [Asegúrate de tener definidas estas variables globales al inicio de tu dino.js]:
+// let triviaIntervalId = null;
+// let yaPauso1000 = false;
+// let enPausaPorHito = false;
+
+    if (puntaje % 100 === 0 && puntaje !== 0) {
         if (!yaPauso1000) {
             enPausaPorHito = true;
             yaPauso1000 = true;
-            generarPreguntaYRspuesta();
+
             // 1. Mostrar la trivia y ocultar el canvas del juego
             document.getElementById('contenedor-kahoot').style.display = 'block';
             document.getElementById('board').style.display = 'none';
@@ -252,7 +257,6 @@ function actualizar() {
             document.getElementById('board').style.display = 'block';
         }
     }
-
 
     // --- Lógica del Puntaje ---
     contexto.fillStyle="black";

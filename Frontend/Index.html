@@ -12,9 +12,10 @@
         <div class="contenedor-canvas">
             <canvas id="board"></canvas>
         </div>
-
-        <div id="contenedor-kahoot">
+    
+        <div id="contenedor-kahoot" style="display: none;">
             <div id="kahoot-timer">10</div>
+
             <div class="kahoot-pregunta">
                 <h2 id="kahoot-pregunta-texto">¿Aquí va la pregunta del Dino Trivia?</h2>
             </div>
@@ -34,8 +35,14 @@
                     <span class="kahoot-icono">●</span>
                     <span id="kahoot-txt-3">Tercera opción</span>
                 </button>
+
+                <button class="kahoot-btn btn-verde" onclick="enviarRespuesta(4)">
+                    <span class="kahoot-icono">■</span>
+                    <span id="kahoot-txt-4">Cuarta opción</span>
+                </button>
             </div>
         </div>
+
         <div id="barra-reinicio" class="barra-inferior">
             <button class="btn-accion" id="btn-reiniciar" onclick="resetear()">Reiniciar Juego</button>
         </div>
