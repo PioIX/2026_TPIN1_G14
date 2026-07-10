@@ -215,7 +215,7 @@ function actualizar() {
 // let yaPauso1000 = false;
 // let enPausaPorHito = false;
 
-    if (puntaje % 100 === 0 && puntaje !== 0) {
+    if (puntaje % 1000 === 0 && puntaje !== 0) {
         if (!yaPauso1000) {
             enPausaPorHito = true;
             yaPauso1000 = true;
@@ -398,12 +398,29 @@ function resetear() {
     imgDino.src = "./img/dino.png";
 }
 
-async function fetchUserData(userId) {
-  try {
-    const response = await fetch(`https://example.com{userId}`);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
+async function obtenerPreguntaYRespuestas(id) {
+    // Reemplaza con la URL real de tu servidor/API
+    const API_URL = `http://localhost:4000/questions/${id}`; 
+
+    try {
+        const response = await fetch(API_URL);
+
+        // Si el servidor responde con un error (ej. 404 o 500)
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `Error en la petición: ${response.status}`);
+        }
+
+        // Si todo sale bien, parseamos el JSON
+        const data = await response.json();
+        return data;
+
+    } catch (error) {
+        console.error("Hubo un problema al obtener los datos:", error.message);
+
+        return {
+            error: true,
+            message: error.message
+        }; 
+    }
 }

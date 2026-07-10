@@ -285,3 +285,33 @@ app.delete('/admin/questions/:id', async (req, res) => {
     }
 });
 
+app.get('/questions/:id', async (req, res) => {
+  const questionId = req.params.id;
+
+  try {
+    // Traer la pregunta
+    const question = await realizarQuery(
+      'SELECT question FROM Questions WHERE id = ?',
+      [questionId]
+    );
+
+    if (question.length === 0) {
+      return res.status(404).json({ error: 'Pregunta no encontrada' });
+    }   
+
+    // Traer solo las respuestas cuyo is_question coincida con       el id de la URL
+    const answerRows = await realizarQuery(
+      'SELECT * FROM Answers WHERE is_question = ?',
+      [questionId]
+    );
+
+    res.json({
+      question: question,
+      answers: answerRows
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al consultar la base de datos' });
+  }
+});
