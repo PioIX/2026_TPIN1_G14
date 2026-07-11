@@ -1,3 +1,5 @@
+// --- VARIABLES GLOBALES ---
+let esta_correcto = false;
 // --- VARIABLES DEL TABLERO ---
 let tablero;
 let anchoTablero = 750;
@@ -11,7 +13,7 @@ let hitoTimeoutId = null;   // Guardamos el id del setTimeout para poder cancela
 let triviaIntervalId = null;
 
 // --- VARIABLES DEL DINO ---
-let anchoDino = 60; 
+let anchoDino = 60;
 let altoDino = 65;
 let dinoX = 50;
 let estaAgachado = false
@@ -30,21 +32,21 @@ let imgPajaro2; //sprite
 let flechaEstaPresionada;
 // Objeto dino con sus propiedades
 let dino = {
-    x : dinoX,
-    y : dinoY,
-    ancho : anchoDino,
-    alto : altoDino
+    x: dinoX,
+    y: dinoY,
+    ancho: anchoDino,
+    alto: altoDino
 }
 
 // --- VARIABLES DE LOS CACTUS ---
-let listaCactus = []; 
+let listaCactus = [];
 let anchoCactus1 = 34;
 let anchoCactus2 = 69;
 let anchoCactus3 = 102;
 
 let altoCactus = 70;
-let cactusX = 700; 
-let cactusY = altoTablero - altoCactus; 
+let cactusX = 700;
+let cactusY = altoTablero - altoCactus;
 
 let imgCactus1;
 let imgCactus2;
@@ -53,13 +55,13 @@ let imgCactus3;
 // --- FÍSICA Y ESTADO DEL JUEGO ---
 let velocidadX = -8; // Velocidad del juego
 let velocidadY = 0; //mov vertical
-let gravedad = 0.8; 
+let gravedad = 0.8;
 
 let juegoTerminado = false;
 let puntaje = 0;
 
 // Esta función se ejecuta apenas carga la página
-window.onload = function() {
+window.onload = function () {
     tablero = document.getElementById("board"); //ref al canv
     tablero.height = altoTablero;
     tablero.width = anchoTablero;
@@ -69,7 +71,7 @@ window.onload = function() {
     // Cargar imagen del dinosaurio estático / saltando
     imgDino = new Image();
     imgDino.src = "./img/dino.png";
-    imgDino.onload = function() {
+    imgDino.onload = function () {
         contexto.drawImage(imgDino, dino.x, dino.y, dino.ancho, dino.alto);
     }
 
@@ -105,14 +107,14 @@ window.onload = function() {
 }
 
 // Función principal que se repite constantemente para animar el juego
-function actualizar() {
+async function actualizar() {
     requestAnimationFrame(actualizar);
-    
+
     // Si perdiste, se frena acá y no actualiza más nada
     if (juegoTerminado) {
         return;
     }
-    
+
     // Limpia el tablero en cada frame para volver a dibujar
     contexto.clearRect(0, 0, tablero.width, tablero.height);
 
@@ -123,27 +125,27 @@ function actualizar() {
         velocidadY += gravedad;
 
         //Calcula donde está el piso según el alto actual del dino
-        let pisoActual = altoTablero - dino.alto; 
+        let pisoActual = altoTablero - dino.alto;
 
         // Aplica la gravedad usando el pisoActual en lugar del dinoY fijo
-        dino.y = Math.min(dino.y + velocidadY, pisoActual); 
+        dino.y = Math.min(dino.y + velocidadY, pisoActual);
     }
 
     let pisoActual = altoTablero - dino.alto;
 
     // Lógica para animar los sprites al correr
-    let imagenActualDino = imgDino; 
+    let imagenActualDino = imgDino;
 
     // Revisamos si está tocando el pisoActual (solo animamos si no está pausado)
-    if (!enPausaPorHito && dino.y == pisoActual) { 
+    if (!enPausaPorHito && dino.y == pisoActual) {
         if (Math.floor(puntaje / 10) % 2 === 0) {
-            if (estaAgachado === false){ 
+            if (estaAgachado === false) {
                 imagenActualDino = imgDinoCorre1;
             } else {
                 imagenActualDino = imgDinoCorreAgachado1;
             }
         } else {
-            if (estaAgachado === false)  {
+            if (estaAgachado === false) {
                 imagenActualDino = imgDinoCorre2;
             } else {
                 imagenActualDino = imgDinoCorreAgachado2;
@@ -164,29 +166,14 @@ function actualizar() {
         }
         contexto.drawImage(cactus.img, cactus.x, cactus.y, cactus.ancho, cactus.alto);
 
-        // Chequear si el dino se chocó con este cactus
         if (!enPausaPorHito && detectarColision(dino, cactus)) {
             juegoTerminado = true;
-
-            // Guardamos el rectángulo viejo (puede ser el agachado, más ancho y más bajo)
             let anchoViejo = dino.ancho;
             let xVieja = dino.x;
             let yVieja = dino.y;
             let altoViejo = dino.alto;
-
-            // Si murió agachado, compensamos la diferencia de ancho
-            // para que el frente del dino no "retroceda" al pasar a tamaño normal
-            let diferenciaAncho = anchoDino - anchoViejo; // va a dar negativo si estaba agachado
-            dino.x = dino.x - diferenciaAncho; 
-            // (restamos porque si anchoViejo era mayor, diferenciaAncho es negativo,
-            //  y queremos que dino.x aumente para "adelantar" el dino)
-
-            // BUGFIX: en vez de forzar dino.y al piso (lo que hacía que el sprite
-            // de muerte se "teletransportara" hacia abajo si moría en el aire),
-            // mantenemos fijo el borde inferior ("los pies") del dino al pasar
-            // al tamaño normal. Si murió agachado en el piso, los pies siguen
-            // tocando el piso. Si murió saltando, se queda flotando en el aire
-            // exactamente donde chocó.
+            let diferenciaAncho = anchoDino - anchoViejo;
+            dino.x = dino.x - diferenciaAncho;
             let piesViejos = yVieja + altoViejo;
             dino.ancho = anchoDino;
             dino.alto = altoDino;
@@ -196,7 +183,7 @@ function actualizar() {
             contexto.clearRect(xVieja - 2, yVieja - 2, anchoViejo + 4, altoViejo + 4);
 
             imgDino.src = "./img/dino-dead.png";
-            imgDino.onload = function() {
+            imgDino.onload = function () {
                 contexto.drawImage(imgDino, dino.x, dino.y, dino.ancho, dino.alto);
             }
         }
@@ -206,19 +193,11 @@ function actualizar() {
         return; // Si está pausado, no actualiza puntaje ni genera cactus nuevos
     }
 
-    // Al final, en la sección de puntaje:
-    // BUGFIX: cuando puntaje NO es múltiplo de 1000, reseteamos yaPauso1000
-    // para que la pausa se pueda volver a activar en el próximo múltiplo (2000, 3000, ...)
-
-// [Asegúrate de tener definidas estas variables globales al inicio de tu dino.js]:
-// let triviaIntervalId = null;
-// let yaPauso1000 = false;
-// let enPausaPorHito = false;
-
     if (puntaje % 1000 === 0 && puntaje !== 0) {
         if (!yaPauso1000) {
             enPausaPorHito = true;
             yaPauso1000 = true;
+            esta_correcto = false; // Reinicia la variable de respuesta correcta para la nueva pregunta
 
             // 1. Mostrar la trivia y ocultar el canvas del juego
             document.getElementById('contenedor-kahoot').style.display = 'block';
@@ -233,6 +212,22 @@ function actualizar() {
             if (triviaIntervalId) {
                 clearInterval(triviaIntervalId);
             }
+            id_actual = puntaje / 1000; // Almacenamos el ID de la pregunta actual
+            const pyr = await obtenerPreguntaYRespuestas(puntaje / 1000);
+            console.log(pyr);
+
+            // 1. Entramos al segundo nivel para obtener el TEXTO real de la pregunta
+            let pregunta = pyr.question.question;
+
+            // 2. Ahora respuestas ya no va a ser undefined, va a ser la lista con los 4 países
+            let respuestas = pyr.answers;
+            console.log(respuestas, pregunta);
+
+            document.getElementById("kahoot-pregunta-texto").textContent = pregunta;
+            document.getElementById("kahoot-txt-1").textContent = respuestas[0].answer;
+            document.getElementById("kahoot-txt-2").textContent = respuestas[1].answer;
+            document.getElementById("kahoot-txt-3").textContent = respuestas[2].answer;
+            document.getElementById("kahoot-txt-4").textContent = respuestas[3].answer;
 
             // 4. Iniciar el contador regresivo de 1 en 1 segundo (1000ms)
             triviaIntervalId = setInterval(() => {
@@ -250,7 +245,7 @@ function actualizar() {
         }
     } else {
         yaPauso1000 = false;
-        
+
         // Si no estamos en el hito, nos aseguramos de que el juego se vea y la trivia esté oculta
         if (!enPausaPorHito) {
             document.getElementById('contenedor-kahoot').style.display = 'none';
@@ -259,8 +254,8 @@ function actualizar() {
     }
 
     // --- Lógica del Puntaje ---
-    contexto.fillStyle="black";
-    contexto.font="20px courier";
+    contexto.fillStyle = "black";
+    contexto.font = "20px courier";
     puntaje++; // Sube el puntaje constantemente
     contexto.fillText(puntaje, 5, 20); // Dibuja el puntaje arriba a la izquierda
 }
@@ -268,7 +263,7 @@ function actualizar() {
 // ----------------------- Funciones de agachado y salto ------------------------
 
 function moverDino(e) {
-    if (juegoTerminado || enPausaPorHito){
+    if (juegoTerminado || enPausaPorHito) {
         return;
     }
 
@@ -283,7 +278,7 @@ function moverDino(e) {
         dino.alto = 45; //ajustamos tamaño dino
         dino.ancho = 80; //lo mismo de arriba
         dino.y = altoTablero - dino.alto; //recalculamos asi no queda flotando
-    } else if(e.code == "ArrowDown" && dino.y != dinoY) { //si se toca flecha abajo y se esta en el aire
+    } else if (e.code == "ArrowDown" && dino.y != dinoY) { //si se toca flecha abajo y se esta en el aire
         flechaEstaPresionada = true;
         velocidadY = 10; //En el juego original cuando se aprieta flecha bajo el dino baja mas rapido si esta en  el aikre esto lo hace
         clearInterval(estaVolando);
@@ -308,7 +303,7 @@ function soltarDino(e) {
         flechaEstaPresionada = false; //se aclara ya nio esta apretada
         clearInterval(estaVolando); //se termina cualquier intervalo
         estaAgachado = false;//Cambiamos la global y reiniciamos al default las variables del dino
-        dino.alto = altoDino; 
+        dino.alto = altoDino;
         dino.ancho = anchoDino;
     }
 }
@@ -316,21 +311,21 @@ function soltarDino(e) {
 
 // Función para generar cactus aleatorios
 function colocarCactus() {
-    if (juegoTerminado || enPausaPorHito){
+    if (juegoTerminado || enPausaPorHito) {
         return;
-    } 
+    }
 
     // Objeto base para el nuevo cactus
     let cactus = {
-        img : null,
-        x : cactusX,
-        y : cactusY,
-        ancho : null,
+        img: null,
+        x: cactusX,
+        y: cactusY,
+        ancho: null,
         alto: altoCactus
     }
 
     // Genera un número aleatorio entre 0 y casi 1
-    let probabilidadCactus = Math.random(); 
+    let probabilidadCactus = Math.random();
 
     // Dependiendo del número aleatorio, elige el tamaño del cactus
     if (probabilidadCactus > .90) { // 10% de probabilidad: cactus grande (de a 3)
@@ -359,9 +354,9 @@ function colocarCactus() {
 // Función matemática para saber si dos rectángulos (dino y cactus) se están tocando
 function detectarColision(a, b) {
     return a.x < b.x + b.ancho &&   // El borde izquierdo de 'a' no pasa el borde derecho de 'b'
-           a.x + a.ancho > b.x &&   // El borde derecho de 'a' ya pasó el borde izquierdo de 'b'
-           a.y < b.y + b.alto &&    // El borde superior de 'a' no pasa el borde inferior de 'b'
-           a.y + a.alto > b.y;      // El borde inferior de 'a' ya pasó el borde superior de 'b'
+        a.x + a.ancho > b.x &&   // El borde derecho de 'a' ya pasó el borde izquierdo de 'b'
+        a.y < b.y + b.alto &&    // El borde superior de 'a' no pasa el borde inferior de 'b'
+        a.y + a.alto > b.y;      // El borde inferior de 'a' ya pasó el borde superior de 'b'
 }
 
 function resetear() {
@@ -381,17 +376,17 @@ function resetear() {
 
     //Limpiar la lista de cactus para que empiece vacío
     listaCactus = [];
-    
+
     //Devolver al dino a sus dimensiones y posición iniciales
     estaAgachado = false;
     flechaEstaPresionada = false;
     clearInterval(estaVolando);
-    
+
     dino.ancho = anchoDino;
     dino.alto = altoDino;
     dino.x = dinoX;
     dino.y = altoTablero - altoDino;
-    
+
     velocidadY = 0; // Resetear velocidad de salto o caida
 
     //Restaurar la imagen original del dino (sacar la de muerto)
@@ -399,19 +394,13 @@ function resetear() {
 }
 
 async function obtenerPreguntaYRespuestas(id) {
-    // Reemplaza con la URL real de tu servidor/API
-    const API_URL = `http://localhost:4000/questions/${id}`; 
-
+    const API_URL = `http://localhost:4000/questions/${id}`;
     try {
         const response = await fetch(API_URL);
-
-        // Si el servidor responde con un error (ej. 404 o 500)
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.error || `Error en la petición: ${response.status}`);
         }
-
-        // Si todo sale bien, parseamos el JSON
         const data = await response.json();
         return data;
 
@@ -421,6 +410,34 @@ async function obtenerPreguntaYRespuestas(id) {
         return {
             error: true,
             message: error.message
-        }; 
+        };
+    }
+}
+
+async function enviarRespuesta(respuestaSeleccionada) {
+    const API_URL = `http://localhost:4000/questions/${id_actual}`;
+    console.log(id_actual, respuestaSeleccionada);
+    try {
+        const response = await fetch(API_URL);
+        console.log("fetch")
+        const data = await response.json();
+        console.log("data");
+
+        let as = respuestaSeleccionada - 1;
+        console.log("Respuesta seleccionada:", respuestaSeleccionada);
+        console.log(data.answers);
+        let respuestaUsuario = data.answers[as];
+        if (respuestaUsuario.is_correct === 1) {
+            console.log("Respuesta correcta");
+            return esta_correcto = true;
+        }
+
+    } catch (error) {
+        console.error("Hubo un problema al obtener los datos");
+
+        return {
+            error: true,
+            message: error.message
+        };
     }
 }

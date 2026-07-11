@@ -299,14 +299,13 @@ app.get('/questions/:id', async (req, res) => {
       return res.status(404).json({ error: 'Pregunta no encontrada' });
     }   
 
-    // Traer solo las respuestas cuyo is_question coincida con       el id de la URL
     const answerRows = await realizarQuery(
       'SELECT * FROM Answers WHERE is_question = ?',
       [questionId]
     );
 
     res.json({
-      question: question,
+      question: question[0],
       answers: answerRows
     });
 
