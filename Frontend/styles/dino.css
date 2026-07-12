@@ -133,3 +133,30 @@ canvas {
 .btn-azul { background-color: #1368ce; }
 .btn-amarillo { background-color: #d89e00; }
 .btn-verde { background-color: #26890c; }
+
+.feedback-correcto, 
+.feedback-incorrecto {
+    text-align: center;
+    padding: 40px;
+    border-radius: 8px;
+    color: #ffffff;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
+    /* Animación suave de aparición */
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.feedback-correcto {
+    background-color: #26890c; /* Verde éxito */
+}
+
+.feedback-incorrecto {
+    background-color: #e21b3c; /* Rojo error */
+}
+
+.feedback-correcto h1, 
+.feedback-incorrecto h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}

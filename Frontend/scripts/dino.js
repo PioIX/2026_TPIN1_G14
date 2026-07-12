@@ -198,7 +198,9 @@ async function actualizar() {
             enPausaPorHito = true;
             yaPauso1000 = true;
             esta_correcto = false; // Reinicia la variable de respuesta correcta para la nueva pregunta
-
+            id_actual = puntaje / 1000; // Almacenamos el ID de la pregunta actual
+            const pyr = await obtenerPreguntaYRespuestas(puntaje / 1000);
+            console.log(pyr);
             // 1. Mostrar la trivia y ocultar el canvas del juego
             document.getElementById('contenedor-kahoot').style.display = 'block';
             document.getElementById('board').style.display = 'none';
@@ -212,9 +214,6 @@ async function actualizar() {
             if (triviaIntervalId) {
                 clearInterval(triviaIntervalId);
             }
-            id_actual = puntaje / 1000; // Almacenamos el ID de la pregunta actual
-            const pyr = await obtenerPreguntaYRespuestas(puntaje / 1000);
-            console.log(pyr);
 
             // 1. Entramos al segundo nivel para obtener el TEXTO real de la pregunta
             let pregunta = pyr.question.question;
@@ -235,7 +234,7 @@ async function actualizar() {
                 componenteTimer.textContent = tiempoRestante; // Actualiza el número en el HTML
 
                 // Cuando el tiempo llega a cero, frena el reloj y vuelve al juego
-                if (tiempoRestante <= 0) {
+                if (tiempoRestante <= 0 || esta_correcto == true) {
                     clearInterval(triviaIntervalId);
                     enPausaPorHito = false;
                     document.getElementById('contenedor-kahoot').style.display = 'none';
@@ -423,6 +422,7 @@ async function enviarRespuesta(respuestaSeleccionada) {
         const data = await response.json();
         console.log("data");
 
+
         let as = respuestaSeleccionada - 1;
         console.log("Respuesta seleccionada:", respuestaSeleccionada);
         console.log(data.answers);
@@ -432,8 +432,10 @@ async function enviarRespuesta(respuestaSeleccionada) {
             return esta_correcto = true;
         }
 
+
     } catch (error) {
         console.error("Hubo un problema al obtener los datos");
+
 
         return {
             error: true,
