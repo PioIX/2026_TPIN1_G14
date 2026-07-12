@@ -23,18 +23,28 @@ body {
     border-radius: 10px;
     margin-bottom: 15px;
     font-size: 18px;
-    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#nombre-jugador {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: none;
+    font-family: inherit;
+    font-size: 16px;
 }
 
 canvas {
     display: block;
     background-color: lightgray;
-    border-radius: 8px; 
+    border-radius: 8px;
 }
 
 .barra-inferior {
-    margin-top: 15px; 
-    justify-content: center; 
+    margin-top: 15px;
 }
 
 .btn-accion {
@@ -47,86 +57,85 @@ canvas {
     font-family: inherit;
     font-weight: bold;
     cursor: pointer;
-    width: 100%; 
+    width: 100%;
 }
 
-.btn-accion:active {
-    box-shadow: 0 1px 0 #1b4e20;
-}
+/* ===================== TRIVIA ESTILO KAHOOT ===================== */
 
-/* Contenedor principal de la trivia */
-/* IMPORTANTE: Agregar "position: relative" a tu contenedor para que el timer se guíe de él */
+/* Contenedor principal: pregunta arriba, tablero de respuestas 2x2 abajo */
 #contenedor-kahoot {
-    position: relative; 
-    background-color: lightgray;
-    border: 3px solid #333;
-    border-radius: 8px;
-    padding: 50px;
-    margin-top: 10px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    font-family: sans-serif;
+    position: relative;
+    background-color: #46178f;
+    border-radius: 12px;
+    width: 750px;
+    height: 420px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-/* Estilos para el círculo del contador */
+/* Círculo del contador */
 #kahoot-timer {
     position: absolute;
-    top: 15px;
-    right: 15px;
-    background-color: #e21b3c;
-    color: white;
-    font-size: 1.3rem;
-    font-weight: bold;
-    width: 45px;
-    height: 45px;
+    top: 14px;
+    right: 14px;
+    background-color: #ffffff;
+    color: #46178f;
+    font-size: 1.4rem;
+    font-weight: 900;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    border: 3px solid #46178f;
+    z-index: 5;
+}
+
+/* Banner de la pregunta */
+.kahoot-pregunta {
+    flex: 0 0 auto;
+    background-color: #ffffff;
+    padding: 25px 90px 25px 25px; /* extra a la derecha para no chocar con el timer */
 }
 
 .kahoot-pregunta h2 {
     text-align: center;
     color: #333;
-    margin-bottom: 20px;
-    font-size: 1.4rem;
+    margin: 0;
+    font-size: 1.5rem;
 }
 
-/* Distribución en 3 columnas para las respuestas */
+/* Tablero de respuestas: 2 filas x 2 columnas */
 .kahoot-grid {
+    flex: 1 1 auto;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    grid-template-rows: repeat(2, 1fr);
+    gap: 4px;
+    padding: 4px;
 }
 
-/* Estilo base de los botones de respuesta */
 .kahoot-btn {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    padding: 15px;
+    justify-content: center;
     border: none;
-    border-radius: 6px;
     color: white;
-    font-size: 1.1rem;
+    font-size: 1.3rem;
     font-weight: bold;
     cursor: pointer;
-    transition: transform 0.1s ease, filter 0.2s ease;
-    box-shadow: 0 4px 0px rgba(0,0,0,0.2);
 }
 
 .kahoot-btn:hover {
     filter: brightness(1.1);
 }
 
-.kahoot-btn:active {
-    transform: translateY(4px);
-    box-shadow: none;
-}
-
 .kahoot-icono {
-    font-size: 1.5rem;
-    margin-right: 10px;
+    font-size: 2rem;
+    margin-right: 14px;
 }
 
 .btn-rojo { background-color: #e21b3c; }
@@ -134,29 +143,84 @@ canvas {
 .btn-amarillo { background-color: #d89e00; }
 .btn-verde { background-color: #26890c; }
 
-.feedback-correcto, 
+/* Carteles de feedback (Correcto / Incorrecto) a pantalla completa */
+.feedback-correcto,
 .feedback-incorrecto {
-    text-align: center;
-    padding: 40px;
-    border-radius: 8px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    /* BUGFIX: sin !important, así JS puede alternar display:none / flex */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     color: #ffffff;
-    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2);
-    /* Animación suave de aparición */
-    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 10;
 }
 
-.feedback-correcto {
-    background-color: #26890c; /* Verde éxito */
-}
+.feedback-correcto { background-color: #26890c; }
+.feedback-incorrecto { background-color: #e21b3c; }
 
-.feedback-incorrecto {
-    background-color: #e21b3c; /* Rojo error */
-}
-
-.feedback-correcto h1, 
+.feedback-correcto h1,
 .feedback-incorrecto h1 {
     margin: 0;
     font-size: 2.5rem;
     text-transform: uppercase;
-    letter-spacing: 2px;
+}
+
+/* ===================== TABLA DE MEJORES PUNTAJES ===================== */
+
+/* Contenedor que reemplaza al canvas cuando termina la partida */
+#contenedor-puntajes {
+    width: 750px;
+    height: 250px;
+    box-sizing: border-box;
+    background-color: #46178f;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.puntajes-caja {
+    width: 100%;
+    max-width: 400px;
+    color: white;
+    text-align: center;
+}
+
+.puntajes-caja h2 {
+    margin: 0 0 15px;
+    font-size: 1.2rem;
+}
+
+#tabla-puntajes {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    color: #333;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+#tabla-puntajes th,
+#tabla-puntajes td {
+    padding: 8px 12px;
+    text-align: center;
+}
+
+#tabla-puntajes th {
+    background-color: #2a0e5c;
+    color: white;
+}
+
+#tabla-puntajes tr:nth-child(even) {
+    background-color: #f0f0f0;
+}
+
+#puntaje-actual-texto {
+    margin-top: 15px;
+    font-size: 1rem;
 }

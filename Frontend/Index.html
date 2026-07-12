@@ -8,18 +8,41 @@
     <script src="scripts/dino.js"></script>
 </head>
 <body>
-    <div class="contenedor-juego"> 
+    <div class="contenedor-juego">
+        <div class="barra-superior">
+            <label for="nombre-jugador">Jugador:</label>
+            <input type="text" id="nombre-jugador" placeholder="Ingresá tu nombre" maxlength="20">
+        </div>
+
         <div class="contenedor-canvas">
             <canvas id="board"></canvas>
         </div>
-    
+
+        <!-- Tabla con los mejores puntajes del jugador actual, se muestra al terminar la partida -->
+        <div id="contenedor-puntajes" style="display: none;">
+            <div class="puntajes-caja">
+                <h2>Mejores puntajes de <span id="puntajes-nombre-usuario"></span></h2>
+                <table id="tabla-puntajes">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Puntaje</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-puntajes-cuerpo"></tbody>
+                </table>
+                <p id="puntaje-actual-texto"></p>
+            </div>
+        </div>
+
         <div id="contenedor-kahoot" style="display: none;">
             <div id="kahoot-timer">10</div>
 
             <div class="kahoot-pregunta">
                 <h2 id="kahoot-pregunta-texto">¿...?</h2>
             </div>
-            
+
             <div class="kahoot-grid">
                 <button class="kahoot-btn btn-rojo" onclick="enviarRespuesta(1)">
                     <span class="kahoot-icono">▲</span>
@@ -42,15 +65,24 @@
                 </button>
             </div>
             <div class="feedback-correcto" style="display: none;">
-                <H1>Correcto!!</H1>
+                <h1>Correcto!!</h1>
             </div>
             <div class="feedback-incorrecto" style="display: none;">
-                <H1>Incorrecto</H1>
+                <h1>Incorrecto</h1>
             </div>
         </div>
 
+        <!--
+            Este botón arranca siempre diciendo "Iniciar Juego" al entrar a la
+            página (juegoIniciado = false en dino.js). Al primer click,
+            manejarBotonJuego() arranca la partida y cambia el texto a
+            "Reiniciar Juego" para el resto de la sesión. Después de eso,
+            cada click (ya sea con la partida en curso, perdida por chocar
+            un cactus, o perdida por responder mal una pregunta) simplemente
+            reinicia la partida desde cero.
+        -->
         <div id="barra-reinicio" class="barra-inferior">
-            <button class="btn-accion" id="btn-reiniciar" onclick="resetear()">Reiniciar Juego</button>
+            <button class="btn-accion" id="btn-reiniciar" onclick="manejarBotonJuego()">Iniciar Juego</button>
         </div>
     </div>
 </body>
