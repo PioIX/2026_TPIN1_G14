@@ -45,19 +45,16 @@ app.get('/users', async (req, res) => {
 
 app.post('/register', async (req, res) => {
     const { fullName, nickName, password } = req.body;
- 
-    // Validación de campos obligatorios
+
     if (!fullName || !nickName || !password) {
         return res.status(400).json({
             success: false,
             message: 'Todos los campos son obligatorios.',
         });
     }
- 
+
     try {
-        // Verificar que el nickName no exista
-        const vfNick = await realizarQuery('SELECT id_user FROM Users WHERE nickName = ?',
-            [nickName]);
+        const vfNick = await realizarQuery('SELECT id_user FROM Users WHERE nickName = ?', [nickName]);
         if (vfNick.length > 0) {
             return res.status(409).json({
                 success: false,
@@ -65,17 +62,18 @@ app.post('/register', async (req, res) => {
             });
         }
 
+        const result = await realizarQuery(
+            'INSERT INTO Users (fullName, nickName, password, is_ad) VALUES (?, ?, ?, FALSE)',
+            [fullName, nickName, password]
+        );
 
-        // Insertar usuario
-        const result = await realizarQuery('INSERT INTO Users (fullName, nickName, password, is_ad) VALUES (?, ?, ?, FALSE)', [fullName, nickName, password]);
-        return res.status(201).json({ userId: result.insertId });
- 
+        //return, con success, message y el userId juntos
         return res.status(201).json({
             success: true,
-            message: 'Todo ok!',
+            message: 'Todo ok',
             userId: result.insertId,
         });
- 
+
     } catch (error) {
         console.error('Error en /register:', error);
         return res.status(500).json({
@@ -84,6 +82,7 @@ app.post('/register', async (req, res) => {
         });
     }
 });
+
 
 app.post('/login', async (req, res) => {
     const { nickName, password } = req.body;
@@ -313,4 +312,52 @@ app.get('/questions/:id', async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Error al consultar la base de datos' });
   }
+});
+
+app.get('/puntajes', async (req, res) => {
+    try {
+        // level_max desc: el nivel más alto primero.
+        // id desc: en caso de empate en el nivel, el registro más nuevo primero.
+        const scores = await realizarQuery('SELECT * FROM Matches ORDER BY level_max desc, id desc');
+        return res.status(200).json({
+            success: true,
+            data: scores
+        });
+    } catch (error) {
+        console.error('Error en GET /puntajes:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor.',
+        });
+    }
+})
+
+app.get('/puntajesultid', async (req, res) => {
+    try {
+        const scores = await realizarQuery('SELECT id FROM Matches ORDER BY id desc LIMIT 1');
+        return res.status(200).json(scores);
+    } catch (error) {
+        console.error('Error en GET /puntajesultid:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor.',
+        });
+    }
+});
+
+app.post('/puntajes', async (req, res) => {
+    const { id, date, level_max, id_user } = req.body;
+    try {
+        await realizarQuery('INSERT INTO Matches (id, date, level_max, id_user) VALUES (?, ?, ?, ?)', [id, date, level_max, id_user]);
+        return res.status(201).json({
+            success: true,
+            message: 'Puntaje guardado con éxito.',
+        });
+    } catch (error) {
+        console.error('Error en POST /puntajes:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error interno del servidor.',
+        });
+    }
 });

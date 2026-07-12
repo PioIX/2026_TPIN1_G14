@@ -60,10 +60,9 @@ canvas {
     width: 100%;
 }
 
-/* ===================== TRIVIA ESTILO KAHOOT ===================== */
+/* ===================== TRIVIA ===================== */
 
-/* Contenedor principal: pregunta arriba, tablero de respuestas 2x2 abajo */
-#contenedor-kahoot {
+#contenedor-trivia {
     position: relative;
     background-color: #46178f;
     border-radius: 12px;
@@ -75,8 +74,7 @@ canvas {
     overflow: hidden;
 }
 
-/* Círculo del contador */
-#kahoot-timer {
+#trivia-timer {
     position: absolute;
     top: 14px;
     right: 14px;
@@ -94,22 +92,20 @@ canvas {
     z-index: 5;
 }
 
-/* Banner de la pregunta */
-.kahoot-pregunta {
+.trivia-pregunta {
     flex: 0 0 auto;
     background-color: #ffffff;
-    padding: 25px 90px 25px 25px; /* extra a la derecha para no chocar con el timer */
+    padding: 25px 90px 25px 25px;
 }
 
-.kahoot-pregunta h2 {
+.trivia-pregunta h2 {
     text-align: center;
     color: #333;
     margin: 0;
     font-size: 1.5rem;
 }
 
-/* Tablero de respuestas: 2 filas x 2 columnas */
-.kahoot-grid {
+.trivia-grid {
     flex: 1 1 auto;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -118,7 +114,7 @@ canvas {
     padding: 4px;
 }
 
-.kahoot-btn {
+.trivia-btn {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -129,11 +125,11 @@ canvas {
     cursor: pointer;
 }
 
-.kahoot-btn:hover {
+.trivia-btn:hover {
     filter: brightness(1.1);
 }
 
-.kahoot-icono {
+.trivia-icono {
     font-size: 2rem;
     margin-right: 14px;
 }
@@ -143,7 +139,6 @@ canvas {
 .btn-amarillo { background-color: #d89e00; }
 .btn-verde { background-color: #26890c; }
 
-/* Carteles de feedback (Correcto / Incorrecto) a pantalla completa */
 .feedback-correcto,
 .feedback-incorrecto {
     position: absolute;
@@ -152,7 +147,6 @@ canvas {
     width: 100%;
     height: 100%;
     border-radius: 12px;
-    /* BUGFIX: sin !important, así JS puede alternar display:none / flex */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -172,16 +166,17 @@ canvas {
 
 /* ===================== TABLA DE MEJORES PUNTAJES ===================== */
 
-/* Contenedor que reemplaza al canvas cuando termina la partida */
 #contenedor-puntajes {
     width: 750px;
-    height: 250px;
+    max-height: 1000px;      /* opcional: tope máximo */
+    overflow-y: auto;       /* opcional: scroll si se pasa del tope */
     box-sizing: border-box;
     background-color: #46178f;
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px 0;        /* un poco de aire arriba/abajo */
 }
 
 .puntajes-caja {

@@ -109,14 +109,11 @@ button.btn-accion,
     background-color: #3a9e40;
 }
 
-<<<<<<< HEAD
 #login-section button:active,
 #register-section button:active {
     box-shadow: 0 1px 0 #1b4e20;
     transform: translateY(1px);
 }
-=======
->>>>>>> ca1b3a43343cbd718e824bd2ccb500d7d81dc343
 
 #login-msg,
 #register-msg {
@@ -132,4 +129,11 @@ button.btn-accion,
     gap: 20px;
     margin-bottom: 20px;
     align-items: flex-start;
+}
+
+#register-msg {
+    color: #ffffff;
+    font-size: 13px;
+    text-align: center;
+    min-height: 18px;
 }
