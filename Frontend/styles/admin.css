@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
         body {
             background-image: url('persona_hackeando.png');
             background-size: cover;
@@ -63,3 +64,184 @@
             font-size: 16px;
             font-weight: 600;
         }
+=======
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 24px;
+  background: #0a0a4d;
+  color: #ffffff;
+  font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+.admin-container {
+  max-width: 960px;
+  margin: 0 auto;
+  background: #030b35;
+  border: 1px solid #1a2a7a;
+  border-radius: 8px;
+  padding: 24px;
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-bottom: 1px solid #1a2a7a;
+  padding-bottom: 16px;
+  margin-bottom: 20px;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #ffffff;
+}
+
+.admin-header-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  color: #7a8abf;
+}
+
+.boton {
+  background: #2e7d32;
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.boton:hover {
+  background: #3a9e40;
+}
+
+.boton-secundario {
+  background: #0a1752;
+  color: #ffffff;
+  border: 1px solid #1a2a7a;
+}
+
+.boton-secundario:hover {
+  background: #1a2a7a;
+}
+
+input[name="admin-tabs"] {
+  display: none;
+}
+
+.tab-nav {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid #1a2a7a;
+  margin-bottom: 20px;
+}
+
+.tab-nav label {
+  padding: 10px 16px;
+  cursor: pointer;
+  color: #7a8abf;
+  border-bottom: 2px solid transparent;
+  font-size: 0.95rem;
+}
+
+.tab-nav label:hover {
+  color: #ffffff;
+}
+
+#radio-add:checked ~ .tab-nav label[for="radio-add"],
+#radio-edit:checked ~ .tab-nav label[for="radio-edit"],
+#radio-delete:checked ~ .tab-nav label[for="radio-delete"] {
+  color: #ffffff;
+  border-bottom-color: #2e7d32;
+}
+
+.section {
+  display: none;
+}
+
+#radio-add:checked ~ .tab-content #add-section,
+#radio-edit:checked ~ .tab-content #edit-section,
+#radio-delete:checked ~ .tab-content #delete-section {
+  display: block;
+}
+
+.tab-content h2 {
+  margin-top: 0;
+  font-size: 1.15rem;
+  color: #ffffff;
+}
+
+.tab-content h3 {
+  font-size: 1rem;
+  margin-bottom: 4px;
+  color: #ffffff;
+}
+
+.hint {
+  color: #7a8abf;
+  font-size: 0.85rem;
+  margin-top: 0;
+}
+
+.input,
+input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  background: #0a1752;
+  color: #ffffff;
+  margin-bottom: 12px;
+}
+
+.input::placeholder,
+input[type="text"]::placeholder {
+  color: #7a8abf;
+}
+
+.input:focus,
+input[type="text"]:focus {
+  outline: none;
+  background: #1a2a7a;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid #1a2a7a;
+  font-size: 0.9rem;
+  color: #ffffff;
+}
+
+.admin-table th {
+  background: #0a1752;
+  color: #ffffff;
+}
+
+.admin-table tr:hover {
+  background: #1a2a7a;
+}
+
+.msg {
+  font-size: 0.85rem;
+  color: #ffffff;
+}
+>>>>>>> Stashed changes
