@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dino</title>
+    <link rel="stylesheet" href="styles/dino.css">
+    <script src="scripts/dino.js"></script>
+</head>
+
+<body>
+    <div class="contenedor-juego">
+
+        <div class="contenedor-canvas">
+            <canvas id="board"></canvas>
+        </div>
+
+        <!-- Tabla con los mejores puntajes, se muestra al terminar la partida -->
+        <div id="contenedor-puntajes" style="display: none;">
+            <div class="puntajes-caja">
+                <h2>Leaderboard <span id="puntajes-nombre-usuario"></span></h2>
+                <table id="tabla-puntajes">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>ID Usuario</th>
+                            <th>Nivel Máximo</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-puntajes-cuerpo"></tbody>
+                </table>
+                <p id="puntaje-actual-texto"></p>
+            </div>
+        </div>
+
+        <div id="contenedor-trivia" style="display: none;">
+            <div id="trivia-timer">10</div>
+
+            <div class="trivia-pregunta">
+                <h2 id="trivia-pregunta-texto">¿...?</h2>
+            </div>
+
+            <div class="trivia-grid">
+                <button class="trivia-btn btn-rojo" onclick="enviarRespuesta(1)">
+                    <span class="trivia-icono">▲</span>
+                    <span id="trivia-txt-1">...</span>
+                </button>
+
+                <button class="trivia-btn btn-azul" onclick="enviarRespuesta(2)">
+                    <span class="trivia-icono">◆</span>
+                    <span id="trivia-txt-2">...</span>
+                </button>
+
+                <button class="trivia-btn btn-amarillo" onclick="enviarRespuesta(3)">
+                    <span class="trivia-icono">●</span>
+                    <span id="trivia-txt-3">...</span>
+                </button>
+
+                <button class="trivia-btn btn-verde" onclick="enviarRespuesta(4)">
+                    <span class="trivia-icono">■</span>
+                    <span id="trivia-txt-4">...</span>
+                </button>
+            </div>
+            <div class="feedback-correcto" style="display: none;">
+                <h1>Correcto!!</h1>
+            </div>
+            <div class="feedback-incorrecto" style="display: none;">
+                <h1>Incorrecto</h1>
+            </div>
+        </div>
+
+        <div id="barra-reinicio" class="barra-inferior">
+            <button class="btn-accion" id="btn-reiniciar" onclick="manejarBotonJuego()">Iniciar Juego</button>
+        </div>
+    </div>
+</body>
+
+</html>

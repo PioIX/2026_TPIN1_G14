@@ -1,0 +1,221 @@
+body {
+    background-color: #0a0a4d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Arial Black', Impact, sans-serif;
+}
+
+.contenedor-juego {
+    background-color: #030b35;
+    padding: 20px;
+    border-radius: 15px;
+    width: max-content;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+.barra-superior {
+    background-color: #0a1752;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#nombre-jugador {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: none;
+    font-family: inherit;
+    font-size: 16px;
+}
+
+canvas {
+    display: block;
+    background-color: lightgray;
+    border-radius: 8px;
+}
+
+.barra-inferior {
+    margin-top: 15px;
+}
+
+.btn-accion {
+    background-color: #2e7d32;
+    padding: 15px 30px;
+    border-radius: 12px;
+    font-size: 20px;
+    color: white;
+    border: none;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+}
+
+/* ===================== TRIVIA ===================== */
+
+#contenedor-trivia {
+    position: relative;
+    background-color: #46178f;
+    border-radius: 12px;
+    width: 750px;
+    height: 420px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#trivia-timer {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    background-color: #ffffff;
+    color: #46178f;
+    font-size: 1.4rem;
+    font-weight: 900;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #46178f;
+    z-index: 5;
+}
+
+.trivia-pregunta {
+    flex: 0 0 auto;
+    background-color: #ffffff;
+    padding: 25px 90px 25px 25px;
+}
+
+.trivia-pregunta h2 {
+    text-align: center;
+    color: #333;
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.trivia-grid {
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 4px;
+    padding: 4px;
+}
+
+.trivia-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    color: white;
+    font-size: 1.3rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.trivia-btn:hover {
+    filter: brightness(1.1);
+}
+
+.trivia-icono {
+    font-size: 2rem;
+    margin-right: 14px;
+}
+
+.btn-rojo { background-color: #e21b3c; }
+.btn-azul { background-color: #1368ce; }
+.btn-amarillo { background-color: #d89e00; }
+.btn-verde { background-color: #26890c; }
+
+.feedback-correcto,
+.feedback-incorrecto {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    z-index: 10;
+}
+
+.feedback-correcto { background-color: #26890c; }
+.feedback-incorrecto { background-color: #e21b3c; }
+
+.feedback-correcto h1,
+.feedback-incorrecto h1 {
+    margin: 0;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+}
+
+/* ===================== TABLA DE MEJORES PUNTAJES ===================== */
+
+#contenedor-puntajes {
+    width: 750px;
+    max-height: 1000px;      /* opcional: tope máximo */
+    overflow-y: auto;       /* opcional: scroll si se pasa del tope */
+    box-sizing: border-box;
+    background-color: #46178f;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;        /* un poco de aire arriba/abajo */
+}
+
+.puntajes-caja {
+    width: 100%;
+    max-width: 400px;
+    color: white;
+    text-align: center;
+}
+
+.puntajes-caja h2 {
+    margin: 0 0 15px;
+    font-size: 1.2rem;
+}
+
+#tabla-puntajes {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    color: #333;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+#tabla-puntajes th,
+#tabla-puntajes td {
+    padding: 8px 12px;
+    text-align: center;
+}
+
+#tabla-puntajes th {
+    background-color: #2a0e5c;
+    color: white;
+}
+
+#tabla-puntajes tr:nth-child(even) {
+    background-color: #f0f0f0;
+}
+
+#puntaje-actual-texto {
+    margin-top: 15px;
+    font-size: 1rem;
+}
