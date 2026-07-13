@@ -69,6 +69,7 @@ let velocidadY = 0;
 let gravedad = 0.8;
 
 
+
 // Controla qué pantalla se ve: juego, trivia o puntajes.
 // Es la única función que toca el display de estos tres contenedores,
 // para que nunca queden dos pantallas visibles al mismo tiempo.
@@ -132,9 +133,7 @@ window.onload = function () {
 };
 
 
-// Handler del botón de abajo.
-// Primer click: arranca la partida y el texto pasa a "Reiniciar Juego" para siempre.
-// Siguientes clicks: reinicia la partida en curso o terminada.
+
 function manejarBotonJuego() {
     const boton = document.getElementById("btn-reiniciar");
 
@@ -143,12 +142,16 @@ function manejarBotonJuego() {
         boton.textContent = "Reiniciar Juego";
     }
 
+    // le saca el foco para que se pueda presionar el espacio y no reinicie el juego.
+    boton.blur();
+
     resetear();
 }
 
 
-// Loop principal, se ejecuta en cada frame
-async function actualizar() {
+// Loop principal, se ejecuta en cada frame.
+// Recibe el timestamp que requestAnimationFrame provee automáticamente.
+async function actualizar(tiempoActual) {
     // Se vuelve a pedir el próximo frame antes que nada, así el loop nunca se corta
     requestAnimationFrame(actualizar);
 
@@ -156,6 +159,7 @@ async function actualizar() {
     if (juegoTerminado) {
         return;
     }
+
 
     // Limpia el canvas para redibujar el frame desde cero
     contexto.clearRect(0, 0, tablero.width, tablero.height);
@@ -307,7 +311,15 @@ async function actualizar() {
 
 // Se ejecuta al presionar una tecla
 function moverDino(e) {
-    // No hace nada si el juego no está corriendo o hay una pregunta en pantalla
+    // Evita el comportamiento por default del navegador para estas teclas
+    // (Espacio/flechas hacen scroll de la página o activan el botón que
+    // haya quedado enfocado). Esto se hace SIEMPRE, incluso con el juego
+    // pausado o terminado, para que nunca se cuele un scroll o un click fantasma.
+    if (e.code === "Space" || e.code === "ArrowUp" || e.code === "ArrowDown") {
+        e.preventDefault();
+    }
+
+    // No hace nada más si el juego no está corriendo o hay una pregunta en pantalla
     if (juegoTerminado || enPausaPorHito) {
         return;
     }
@@ -324,7 +336,7 @@ function moverDino(e) {
         dino.ancho = 80;
         dino.y = altoTablero - dino.alto;
 
-    // Agacharse en el aire: acelera la caída
+        // Agacharse en el aire: acelera la caída
     } else if (e.code == "ArrowDown" && dino.y != dinoY) {
         flechaEstaPresionada = true;
         velocidadY = 10;
@@ -421,6 +433,10 @@ function resetear() {
     enPausaPorHito = false;
     yaPauso1000 = false;
     esta_correcto = false;
+
+    // Reinicia también el control de framerate, así el primer frame
+    // después de resetear no arrastra un delta gigante del tiempo pausado
+    ultimoTiempo = 0;
 
     if (hitoTimeoutId !== null) {
         clearTimeout(hitoTimeoutId);
