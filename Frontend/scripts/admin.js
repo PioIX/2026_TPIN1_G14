@@ -62,33 +62,46 @@ async function cargarPreguntas() {
         if (data.success) {
             for (let i = 0; i < datos.length; i++) {
                 let respuestas = datos[i].answers
-                editTabla += "<tr>"
+                const id = datos[i].id;
+
+                /* ---- Fila de la tabla "Eliminar" (sin cambios) ---- */
                 deleteTabla += "<tr>"
-                editTabla += `<td colspan="3">${datos[i].question}</td>`
-                deleteTabla += `<td colspan="3">${datos[i].question}</td>`
+                deleteTabla += `<td colspan="3">${escapeHtml(datos[i].question)}</td>`
                 for (let j = 0; j < respuestas.length; j++) {
-                    editTabla += `<td colspan="3"> ${respuestas[j].answer}</td>`
-                    editTabla += `<td colspan="3">${respuestas[j].is_correct} </td>`
-                    deleteTabla += `<td colspan="3"> ${respuestas[j].answer}</td>`
+                    deleteTabla += `<td colspan="3"> ${escapeHtml(respuestas[j].answer)}</td>`
                     deleteTabla += `<td colspan="3">${respuestas[j].is_correct} </td>`
                 }
-                editTabla += `<td>
-                        <button class="boton" onclick="editarPregunta(${datos[i].id})">
-                            Editar
-                        </button> </td>`;
                 deleteTabla += `<td>
-                        <button class="boton" onclick="eliminarPregunta(${datos[i].id})">
+                        <button class="boton" onclick="eliminarPregunta(${id})">
                             Eliminar
                         </button> </td>`;
-                editTabla += `</tr>`
                 deleteTabla += `</tr>`
-                document.getElementById('edit-table-body').innerHTML = editTabla;
-                document.getElementById('delete-table-body').innerHTML = deleteTabla;
-            }
-        }
 
-        //renderTablaEditar(data.data);
-        //renderTablaEliminar(data.data);
+                /* Fila de la tabla editar los inputs */
+                editTabla += `<tr>`;
+                editTabla += `<td>
+                        <input type="text" class="input edit-question-text" value="${escapeAttr(datos[i].question)}">
+                    </td>`;
+
+                editTabla += `<td><div class="edit-answers-container">`;
+                for (let j = 0; j < respuestas.length; j++) {
+                    editTabla += `
+                        <div class="answer-row">
+                            <input type="radio" name="edit-correct-${id}" ${respuestas[j].is_correct ? 'checked' : ''}>
+                            <input type="text" class="input edit-answer-text" value="${escapeAttr(respuestas[j].answer)}">
+                        </div>`;
+                }
+                editTabla += `</div></td>`;
+
+                editTabla += `<td>
+                        <button class="boton" onclick="guardarEdicion(${id}, this)">
+                            Guardar
+                        </button> </td>`;
+                editTabla += `</tr>`;
+            }
+            document.getElementById('edit-table-body').innerHTML = editTabla || '<tr><td colspan="3">No hay preguntas cargadas.</td></tr>';
+            document.getElementById('delete-table-body').innerHTML = deleteTabla || '<tr><td colspan="2">No hay preguntas cargadas.</td></tr>';
+        }
 
     } catch (error) {
         const msg = 'No se pudo conectar con el servidor.';
@@ -156,40 +169,6 @@ async function sendAdd() {
 
 /* ===================== Tab: Editar ===================== */
 
-async function editarPregunta(id) {
-
-    let nuevaPregunta = prompt("Ingrese la nueva pregunta:");
-    let respuesta1 = prompt("Ingrese una respuesta:");
-    let respuesta2 = prompt("Ingrese una respuesta:");
-    let respuesta3 = prompt("Ingrese una respuesta:");
-    let respuesta4 = prompt("Ingrese una respuesta:");
-
-
-    const respuesta = await fetch(`http://localhost:4000/admin/questions`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            question: nuevaPregunta,
-            respuesta1: 
-            respuesta2: 
-            respuesta3: 
-            respuesta4: 
-
-            id: id
-        })
-    });
-    let response = await respuesta.json()
-    console.log(response)
-    if (respuesta.ok) {
-        alert("Pregunta modificada correctamente.");
-        cargarTablas();
-    } else {
-        alert("Error al modificar la pregunta.");
-    }
-}
-
 async function guardarEdicion(id, boton) {
     const fila = boton.closest('tr');
     const msg = document.getElementById('edit-msg');
@@ -208,10 +187,10 @@ async function guardarEdicion(id, boton) {
     }
 
     try {
-        const response = await fetch(`${API_URL}/admin/questions/${id}`, {
+        const response = await fetch(`${API_URL}/admin/questions`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ question, answers }),
+            body: JSON.stringify({ id, question, answers }),
         });
 
         const data = await response.json();
@@ -227,25 +206,6 @@ async function guardarEdicion(id, boton) {
 }
 
 /* ===================== Tab: Eliminar ===================== */
-
-function renderTablaEliminar(preguntas) {
-    const body = document.getElementById('delete-table-body');
-    body.innerHTML = '';
-
-    if (preguntas.length === 0) {
-        body.innerHTML = '<tr><td colspan="2">No hay preguntas cargadas.</td></tr>';
-        return;
-    }
-
-    preguntas.forEach(p => {
-        const fila = document.createElement('tr');
-        fila.innerHTML = `
-            <td>${escapeHtml(p.question)}</td>
-            <td><button class="boton boton-eliminar" onclick="eliminarPregunta(${p.id})">Eliminar</button></td>
-        `;
-        body.appendChild(fila);
-    });
-}
 
 async function eliminarPregunta(id) {
     const msg = document.getElementById('delete-msg');
@@ -276,6 +236,10 @@ function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+}
+
+function escapeAttr(text) {
+    return String(text ?? '').replace(/"/g, '&quot;');
 }
 
 function cerrarSesion() {
