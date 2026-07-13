@@ -309,12 +309,8 @@ async function actualizar(tiempoActual) {
 }
 
 
-// Se ejecuta al presionar una tecla
 function moverDino(e) {
-    // Evita el comportamiento por default del navegador para estas teclas
-    // (Espacio/flechas hacen scroll de la página o activan el botón que
-    // haya quedado enfocado). Esto se hace SIEMPRE, incluso con el juego
-    // pausado o terminado, para que nunca se cuele un scroll o un click fantasma.
+    // Evita que se presionen estas teclas mientras se juega.
     if (e.code === "Space" || e.code === "ArrowUp" || e.code === "ArrowDown") {
         e.preventDefault();
     }
