@@ -7,16 +7,16 @@ var app = express(); //Inicializo express
 var port = process.env.PORT || 4000; //Ejecuto el servidor en el puerto 4000
 
 // Convierte una petición recibida (POST-GET...) a objeto JSON
-app.use(bodyParser.urlencoded({extended:false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors());
 
 //Pongo el servidor a escuchar
-app.listen(port, function(){
+app.listen(port, function () {
     console.log(`Server running in http://localhost:${port}`);
 });
 
-app.get('/', function(req, res){
+app.get('/', function (req, res) {
     res.status(200).send({
         message: 'GET Home route working fine!'
     });
@@ -113,10 +113,10 @@ app.post('/login', async (req, res) => {
             success: true,
             message: `Bienvenido, ${user.fullName}!`,
             user: {
-                id:       user.id_user,
+                id: user.id_user,
                 fullName: user.fullName,
                 nickName: user.nickName,
-                is_ad:    user.is_ad,
+                is_ad: user.is_ad,
             },
         });
 
@@ -133,13 +133,13 @@ app.get("/Questions", async (req, res) => {
     try {
         const id = req.query.id;
         const queryResult = await realizarQuery(
-            'SELECT question FROM Questions WHERE id = ?', 
+            'SELECT question FROM Questions WHERE id = ?',
             [id]
         );
-        
+
         return res.status(200).json({
             success: true,
-            data: queryResult 
+            data: queryResult
         });
     } catch (error) {
         console.error('Error en /Questions:', error);
@@ -253,7 +253,7 @@ app.put('/admin/questions', async (req, res) => {
             success: true,
             message: 'Pregunta actualizada con éxito.',
         });
-        
+
     } catch (error) {
         console.error('Error en PUT /admin/questions/:id:', error);
         return res.status(500).send({
@@ -285,33 +285,33 @@ app.delete('/admin/questions/:id', async (req, res) => {
 });
 
 app.get('/questions/:id', async (req, res) => {
-  const questionId = req.params.id;
+    const questionId = req.params.id;
 
-  try {
-    // Traer la pregunta
-    const question = await realizarQuery(
-      'SELECT question FROM Questions WHERE id = ?',
-      [questionId]
-    );
+    try {
+        // Traer la pregunta
+        const question = await realizarQuery(
+            'SELECT question FROM Questions WHERE id = ?',
+            [questionId]
+        );
 
-    if (question.length === 0) {
-      return res.status(404).json({ error: 'Pregunta no encontrada' });
-    }   
+        if (question.length === 0) {
+            return res.status(404).json({ error: 'Pregunta no encontrada' });
+        }
 
-    const answerRows = await realizarQuery(
-      'SELECT * FROM Answers WHERE is_question = ?',
-      [questionId]
-    );
+        const answerRows = await realizarQuery(
+            'SELECT * FROM Answers WHERE is_question = ?',
+            [questionId]
+        );
 
-    res.json({
-      question: question[0],
-      answers: answerRows
-    });
+        res.json({
+            question: question[0],
+            answers: answerRows
+        });
 
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Error al consultar la base de datos' });
-  }
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Error al consultar la base de datos' });
+    }
 });
 
 app.get('/puntajes', async (req, res) => {
